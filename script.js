@@ -3,19 +3,61 @@
 /* =========================================================
    CAPITÃO POP IT
    ARQUIVO: script.js
+   VERSÃO CORRIGIDA
 ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeCurrentYear();
-    initializeMobileMenu();
-    initializeBackToTop();
-    initializeCharacterModal();
-    initializeStoryModal();
-    initializeInteractiveStory();
-    initializeGameButtons();
-    initializeMemoryGame();
-    initializeColoringGame();
+    const initializers = [
+        initializeCurrentYear,
+        initializeMobileMenu,
+        initializeBackToTop,
+        initializeCharacterModal,
+        initializeStoryModal,
+        initializeInteractiveStory,
+        initializeGameNavigation,
+        initializeMemoryGame,
+        initializeColoringGame
+    ];
+
+    initializers.forEach((initializer) => {
+        try {
+            initializer();
+        } catch (error) {
+            console.error(
+                `Erro ao iniciar ${initializer.name}:`,
+                error
+            );
+        }
+    });
 });
+
+/* =========================================================
+   FUNÇÕES AUXILIARES
+========================================================= */
+
+function scrollToElement(element) {
+    if (!element) {
+        return;
+    }
+
+    element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+function setBodyModalState(isOpen) {
+    document.body.classList.toggle('modal-open', isOpen);
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
 
 /* =========================================================
    ANO AUTOMÁTICO DO RODAPÉ
@@ -25,7 +67,7 @@ function initializeCurrentYear() {
     const currentYear = document.getElementById('currentYear');
 
     if (currentYear) {
-        currentYear.textContent = new Date().getFullYear();
+        currentYear.textContent = String(new Date().getFullYear());
     }
 }
 
@@ -45,7 +87,10 @@ function initializeMobileMenu() {
         menuButton.classList.remove('is-open');
         navigation.classList.remove('is-open');
         menuButton.setAttribute('aria-expanded', 'false');
-        menuButton.setAttribute('aria-label', 'Abrir menu principal');
+        menuButton.setAttribute(
+            'aria-label',
+            'Abrir menu principal'
+        );
         document.body.classList.remove('menu-open');
     };
 
@@ -53,14 +98,15 @@ function initializeMobileMenu() {
         menuButton.classList.add('is-open');
         navigation.classList.add('is-open');
         menuButton.setAttribute('aria-expanded', 'true');
-        menuButton.setAttribute('aria-label', 'Fechar menu principal');
+        menuButton.setAttribute(
+            'aria-label',
+            'Fechar menu principal'
+        );
         document.body.classList.add('menu-open');
     };
 
     menuButton.addEventListener('click', () => {
-        const isOpen = navigation.classList.contains('is-open');
-
-        if (isOpen) {
+        if (navigation.classList.contains('is-open')) {
             closeMenu();
         } else {
             openMenu();
@@ -89,26 +135,26 @@ function initializeMobileMenu() {
 ========================================================= */
 
 function initializeBackToTop() {
-    const backToTopButton = document.getElementById('backToTopButton');
+    const button = document.getElementById('backToTopButton');
 
-    if (!backToTopButton) {
+    if (!button) {
         return;
     }
 
-    const updateButtonVisibility = () => {
-        backToTopButton.classList.toggle(
+    const updateVisibility = () => {
+        button.classList.toggle(
             'is-visible',
             window.scrollY > 600
         );
     };
 
-    window.addEventListener('scroll', updateButtonVisibility, {
+    window.addEventListener('scroll', updateVisibility, {
         passive: true
     });
 
-    updateButtonVisibility();
+    updateVisibility();
 
-    backToTopButton.addEventListener('click', () => {
+    button.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -117,7 +163,7 @@ function initializeBackToTop() {
 }
 
 /* =========================================================
-   DADOS DOS PERSONAGENS
+   PERSONAGENS
 ========================================================= */
 
 const characterData = {
@@ -128,18 +174,12 @@ const characterData = {
         description:
             'Capitão Pop It é alegre, corajoso e sempre disposto a ajudar. Quando o Pop Alerta aparece, ele observa o problema, escuta os amigos e usa a criatividade para encontrar uma solução.',
         details: [
-            [
-                'Personalidade',
-                'Corajoso, divertido e criativo'
-            ],
+            ['Personalidade', 'Corajoso, divertido e criativo'],
             [
                 'Missão',
                 'Transformar cada Pop-Problema em aprendizado'
             ],
-            [
-                'Lugar especial',
-                'Central Pop It'
-            ]
+            ['Lugar especial', 'Central Pop It']
         ]
     },
 
@@ -154,14 +194,8 @@ const characterData = {
                 'Personalidade',
                 'Inteligente, confiante e carinhosa'
             ],
-            [
-                'Talento',
-                'Criar soluções e unir a turma'
-            ],
-            [
-                'Lugar especial',
-                'Central Pop It'
-            ]
+            ['Talento', 'Criar soluções e unir a turma'],
+            ['Lugar especial', 'Central Pop It']
         ]
     },
 
@@ -172,18 +206,9 @@ const characterData = {
         description:
             'Lia vive as aventuras do mundo real no parquinho e no condomínio. Ela gosta de brincar, imaginar novas possibilidades e participar das soluções ao lado dos amigos.',
         details: [
-            [
-                'Personalidade',
-                'Carinhosa, alegre e criativa'
-            ],
-            [
-                'Gosta de',
-                'Brincadeiras e novas descobertas'
-            ],
-            [
-                'Ajuda a turma com',
-                'Imaginação e gentileza'
-            ]
+            ['Personalidade', 'Carinhosa, alegre e criativa'],
+            ['Gosta de', 'Brincadeiras e novas descobertas'],
+            ['Ajuda a turma com', 'Imaginação e gentileza']
         ]
     },
 
@@ -194,18 +219,9 @@ const characterData = {
         description:
             'Max gosta de fazer perguntas, observar os detalhes e descobrir como as coisas funcionam. Sua curiosidade ajuda a turma a compreender melhor cada Pop-Problema.',
         details: [
-            [
-                'Personalidade',
-                'Curioso, atento e inteligente'
-            ],
-            [
-                'Gosta de',
-                'Investigar e aprender'
-            ],
-            [
-                'Ajuda a turma com',
-                'Perguntas e observações'
-            ]
+            ['Personalidade', 'Curioso, atento e inteligente'],
+            ['Gosta de', 'Investigar e aprender'],
+            ['Ajuda a turma com', 'Perguntas e observações']
         ]
     },
 
@@ -220,10 +236,7 @@ const characterData = {
                 'Personalidade',
                 'Brincalhão, animado e atrapalhado'
             ],
-            [
-                'Talento',
-                'Transformar tensão em diversão'
-            ],
+            ['Talento', 'Transformar tensão em diversão'],
             [
                 'Lição especial',
                 'Tentar novamente sem desistir'
@@ -238,14 +251,8 @@ const characterData = {
         description:
             'Cloud é uma nuvenzinha leve, delicada e encantadora. Ela acompanha as aventuras, ajuda a turma a observar o ambiente e lembra que a calma também pode ajudar a resolver problemas.',
         details: [
-            [
-                'Personalidade',
-                'Calma, delicada e alegre'
-            ],
-            [
-                'Talento',
-                'Observar o ambiente'
-            ],
+            ['Personalidade', 'Calma, delicada e alegre'],
+            ['Talento', 'Observar o ambiente'],
             [
                 'Lição especial',
                 'Respirar, pensar e agir com calma'
@@ -260,18 +267,12 @@ const characterData = {
         description:
             'Balão Hélio observa tudo lá do alto. Seu jeito sonhador ajuda os amigos a enxergarem novas possibilidades e a perceberem detalhes que poderiam passar despercebidos.',
         details: [
-            [
-                'Personalidade',
-                'Sonhador, simpático e curioso'
-            ],
+            ['Personalidade', 'Sonhador, simpático e curioso'],
             [
                 'Talento',
                 'Enxergar as situações de outro ponto de vista'
             ],
-            [
-                'Ajuda a turma com',
-                'Novas ideias e observação'
-            ]
+            ['Ajuda a turma com', 'Novas ideias e observação']
         ]
     },
 
@@ -282,14 +283,8 @@ const characterData = {
         description:
             'Dog Doug é o cãozinho fiel da turma. Ele adora brincar, acompanhar as missões e demonstrar carinho. Sua presença ensina sobre amizade, cuidado e respeito aos animais.',
         details: [
-            [
-                'Personalidade',
-                'Fiel, brincalhão e carinhoso'
-            ],
-            [
-                'Gosta de',
-                'Brincar e acompanhar a turma'
-            ],
+            ['Personalidade', 'Fiel, brincalhão e carinhoso'],
+            ['Gosta de', 'Brincar e acompanhar a turma'],
             [
                 'Lição especial',
                 'Cuidar e respeitar os animais'
@@ -304,38 +299,47 @@ const characterData = {
 
 function initializeCharacterModal() {
     const modal = document.getElementById('characterModal');
-    const modalImage = document.getElementById(
-        'characterModalImage'
-    );
-    const modalLabel = document.getElementById(
-        'characterModalLabel'
-    );
-    const modalTitle = document.getElementById(
-        'characterModalTitle'
-    );
-    const modalDescription = document.getElementById(
+    const image = document.getElementById('characterModalImage');
+    const label = document.getElementById('characterModalLabel');
+    const title = document.getElementById('characterModalTitle');
+    const description = document.getElementById(
         'characterModalDescription'
     );
-    const modalDetails = document.getElementById(
+    const details = document.getElementById(
         'characterModalDetails'
     );
-
-    const characterButtons = document.querySelectorAll(
+    const buttons = document.querySelectorAll(
         '.character-details-button'
     );
 
     if (
         !modal ||
-        !modalImage ||
-        !modalLabel ||
-        !modalTitle ||
-        !modalDescription ||
-        !modalDetails
+        !image ||
+        !label ||
+        !title ||
+        !description ||
+        !details
     ) {
         return;
     }
 
     let previouslyFocusedElement = null;
+
+    const closeModal = () => {
+        if (modal.hidden) {
+            return;
+        }
+
+        modal.hidden = true;
+        setBodyModalState(false);
+
+        if (
+            previouslyFocusedElement &&
+            typeof previouslyFocusedElement.focus === 'function'
+        ) {
+            previouslyFocusedElement.focus();
+        }
+    };
 
     const openModal = (characterKey) => {
         const character = characterData[characterKey];
@@ -346,25 +350,25 @@ function initializeCharacterModal() {
 
         previouslyFocusedElement = document.activeElement;
 
-        modalImage.src = character.image;
-        modalImage.alt = character.name;
-        modalLabel.textContent = character.label;
-        modalTitle.textContent = character.name;
-        modalDescription.textContent = character.description;
+        image.src = character.image;
+        image.alt = character.name;
+        label.textContent = character.label;
+        title.textContent = character.name;
+        description.textContent = character.description;
 
-        modalDetails.innerHTML = character.details
+        details.innerHTML = character.details
             .map(
-                ([title, text]) => `
+                ([detailTitle, detailText]) => `
                     <div>
-                        <strong>${title}:</strong>
-                        <span>${text}</span>
+                        <strong>${escapeHtml(detailTitle)}:</strong>
+                        <span>${escapeHtml(detailText)}</span>
                     </div>
                 `
             )
             .join('');
 
         modal.hidden = false;
-        document.body.classList.add('modal-open');
+        setBodyModalState(true);
 
         const closeButton = modal.querySelector(
             '.modal-close-button'
@@ -375,20 +379,7 @@ function initializeCharacterModal() {
         }
     };
 
-    const closeModal = () => {
-        if (modal.hidden) {
-            return;
-        }
-
-        modal.hidden = true;
-        document.body.classList.remove('modal-open');
-
-        if (previouslyFocusedElement instanceof HTMLElement) {
-            previouslyFocusedElement.focus();
-        }
-    };
-
-    characterButtons.forEach((button) => {
+    buttons.forEach((button) => {
         button.addEventListener('click', () => {
             openModal(button.dataset.character);
         });
@@ -408,14 +399,13 @@ function initializeCharacterModal() {
 }
 
 /* =========================================================
-   DADOS DAS HISTÓRIAS
+   HISTÓRIAS
 ========================================================= */
 
 const storyData = {
     'fruta-misteriosa': {
         category: 'Alimentação saudável',
         title: 'Pop It e a Fruta Misteriosa',
-
         body: `
             <p>
                 Era uma manhã ensolarada no parquinho. Capitão
@@ -469,7 +459,6 @@ const storyData = {
     'dia-da-amizade': {
         category: 'Amizade e respeito',
         title: 'Miss Pop e o Dia da Amizade',
-
         body: `
             <p>
                 Lia e Max estavam montando uma cidade de blocos
@@ -523,7 +512,6 @@ const storyData = {
     'salva-parquinho': {
         category: 'Meio ambiente',
         title: 'A Turma Salva o Parquinho',
-
         body: `
             <p>
                 Depois de um dia movimentado, a turma encontrou
@@ -579,7 +567,6 @@ const storyData = {
     'todas-historias': {
         category: 'Biblioteca da Turma Pop It',
         title: 'Todas as histórias',
-
         body: `
             <p>
                 A biblioteca já começou com três aventuras
@@ -587,37 +574,24 @@ const storyData = {
             </p>
 
             <p>
-                <strong>
-                    1. Pop It e a Fruta Misteriosa
-                </strong>
+                <strong>1. Pop It e a Fruta Misteriosa</strong>
                 <br>
                 Uma história sobre experimentar novos alimentos
                 com cuidado.
             </p>
 
             <p>
-                <strong>
-                    2. Miss Pop e o Dia da Amizade
-                </strong>
+                <strong>2. Miss Pop e o Dia da Amizade</strong>
                 <br>
                 Uma aventura sobre conversar, ouvir e respeitar
                 os amigos.
             </p>
 
             <p>
-                <strong>
-                    3. A Turma Salva o Parquinho
-                </strong>
+                <strong>3. A Turma Salva o Parquinho</strong>
                 <br>
                 Uma missão sobre natureza, organização e trabalho
                 em equipe.
-            </p>
-
-            <p>
-                Novas histórias poderão ser adicionadas aqui,
-                como aventuras sobre escovação dos dentes,
-                organização dos brinquedos, segurança, animais
-                e boas escolhas.
             </p>
         `
     }
@@ -629,34 +603,39 @@ const storyData = {
 
 function initializeStoryModal() {
     const modal = document.getElementById('storyModal');
-    const modalCategory = document.getElementById(
+    const category = document.getElementById(
         'storyModalCategory'
     );
-    const modalTitle = document.getElementById(
-        'storyModalTitle'
-    );
-    const modalBody = document.getElementById(
-        'storyModalBody'
-    );
-
+    const title = document.getElementById('storyModalTitle');
+    const body = document.getElementById('storyModalBody');
     const storyButtons = document.querySelectorAll(
         '.story-button'
     );
-
-    const showAllStoriesButton = document.getElementById(
+    const allStoriesButton = document.getElementById(
         'showAllStoriesButton'
     );
 
-    if (
-        !modal ||
-        !modalCategory ||
-        !modalTitle ||
-        !modalBody
-    ) {
+    if (!modal || !category || !title || !body) {
         return;
     }
 
     let previouslyFocusedElement = null;
+
+    const closeStory = () => {
+        if (modal.hidden) {
+            return;
+        }
+
+        modal.hidden = true;
+        setBodyModalState(false);
+
+        if (
+            previouslyFocusedElement &&
+            typeof previouslyFocusedElement.focus === 'function'
+        ) {
+            previouslyFocusedElement.focus();
+        }
+    };
 
     const openStory = (storyKey) => {
         const story = storyData[storyKey];
@@ -667,12 +646,12 @@ function initializeStoryModal() {
 
         previouslyFocusedElement = document.activeElement;
 
-        modalCategory.textContent = story.category;
-        modalTitle.textContent = story.title;
-        modalBody.innerHTML = story.body;
+        category.textContent = story.category;
+        title.textContent = story.title;
+        body.innerHTML = story.body;
 
         modal.hidden = false;
-        document.body.classList.add('modal-open');
+        setBodyModalState(true);
 
         const closeButton = modal.querySelector(
             '.modal-close-button'
@@ -683,27 +662,14 @@ function initializeStoryModal() {
         }
     };
 
-    const closeStory = () => {
-        if (modal.hidden) {
-            return;
-        }
-
-        modal.hidden = true;
-        document.body.classList.remove('modal-open');
-
-        if (previouslyFocusedElement instanceof HTMLElement) {
-            previouslyFocusedElement.focus();
-        }
-    };
-
     storyButtons.forEach((button) => {
         button.addEventListener('click', () => {
             openStory(button.dataset.story);
         });
     });
 
-    if (showAllStoriesButton) {
-        showAllStoriesButton.addEventListener('click', () => {
+    if (allStoriesButton) {
+        allStoriesButton.addEventListener('click', () => {
             openStory('todas-historias');
         });
     }
@@ -729,7 +695,6 @@ function initializeInteractiveStory() {
     const result = document.getElementById(
         'interactiveResult'
     );
-
     const options = document.querySelectorAll(
         '.interactive-option'
     );
@@ -780,27 +745,22 @@ function initializeInteractiveStory() {
 }
 
 /* =========================================================
-   BOTÕES DA ÁREA DE JOGOS
+   NAVEGAÇÃO DOS JOGOS
 ========================================================= */
 
-function initializeGameButtons() {
+function initializeGameNavigation() {
     document.querySelectorAll('[data-game]').forEach(
         (button) => {
             button.addEventListener('click', () => {
-                const game = button.dataset.game;
-
-                if (game === 'interactive-story') {
-                    const interactiveSection =
+                if (
+                    button.dataset.game ===
+                    'interactive-story'
+                ) {
+                    scrollToElement(
                         document.querySelector(
                             '.interactive-story-section'
-                        );
-
-                    if (interactiveSection) {
-                        interactiveSection.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
+                        )
+                    );
                 }
             });
         }
@@ -812,12 +772,10 @@ function initializeGameButtons() {
 ========================================================= */
 
 function initializeMemoryGame() {
-    const memorySection = document.getElementById(
+    const section = document.getElementById(
         'memoryGameSection'
     );
-    const memoryBoard = document.getElementById(
-        'memoryBoard'
-    );
+    const board = document.getElementById('memoryBoard');
     const movesElement = document.getElementById(
         'memoryMoves'
     );
@@ -838,8 +796,8 @@ function initializeMemoryGame() {
     );
 
     if (
-        !memorySection ||
-        !memoryBoard ||
+        !section ||
+        !board ||
         !movesElement ||
         !pairsElement ||
         !messageElement ||
@@ -850,7 +808,7 @@ function initializeMemoryGame() {
         return;
     }
 
-    const availableCharacters = [
+    const characters = [
         {
             key: 'popit',
             name: 'Capitão Pop It',
@@ -895,17 +853,17 @@ function initializeMemoryGame() {
 
     let firstCard = null;
     let secondCard = null;
-    let boardLocked = false;
+    let locked = false;
     let moves = 0;
     let matchedPairs = 0;
-    let pairGoal = 0;
-    let gameStarted = false;
+    let totalPairs = 0;
+    let gameBuilt = false;
 
     const shuffle = (items) => {
-        const shuffled = [...items];
+        const result = [...items];
 
         for (
-            let index = shuffled.length - 1;
+            let index = result.length - 1;
             index > 0;
             index -= 1
         ) {
@@ -914,21 +872,15 @@ function initializeMemoryGame() {
             );
 
             [
-                shuffled[index],
-                shuffled[randomIndex]
+                result[index],
+                result[randomIndex]
             ] = [
-                shuffled[randomIndex],
-                shuffled[index]
+                result[randomIndex],
+                result[index]
             ];
         }
 
-        return shuffled;
-    };
-
-    const resetTurn = () => {
-        firstCard = null;
-        secondCard = null;
-        boardLocked = false;
+        return result;
     };
 
     const updateStatus = () => {
@@ -936,13 +888,19 @@ function initializeMemoryGame() {
         pairsElement.textContent = String(matchedPairs);
     };
 
-    const finishGame = () => {
-        messageElement.textContent =
-            `Parabéns! Você encontrou todos os ` +
-            `${pairGoal} pares em ${moves} jogadas!`;
+    const resetSelection = () => {
+        firstCard = null;
+        secondCard = null;
+        locked = false;
     };
 
-    const checkCards = () => {
+    const finishGame = () => {
+        messageElement.textContent =
+            `Parabéns! Você encontrou os ${totalPairs} pares ` +
+            `em ${moves} jogadas!`;
+    };
+
+    const compareCards = () => {
         if (!firstCard || !secondCard) {
             return;
         }
@@ -957,9 +915,9 @@ function initializeMemoryGame() {
 
             matchedPairs += 1;
             updateStatus();
-            resetTurn();
+            resetSelection();
 
-            if (matchedPairs === pairGoal) {
+            if (matchedPairs === totalPairs) {
                 finishGame();
             }
 
@@ -967,16 +925,15 @@ function initializeMemoryGame() {
         }
 
         window.setTimeout(() => {
-            firstCard?.classList.remove('is-flipped');
-            secondCard?.classList.remove('is-flipped');
-
-            resetTurn();
+            firstCard.classList.remove('is-flipped');
+            secondCard.classList.remove('is-flipped');
+            resetSelection();
         }, 850);
     };
 
     const handleCardClick = (card) => {
         if (
-            boardLocked ||
+            locked ||
             card === firstCard ||
             card.classList.contains('is-matched')
         ) {
@@ -991,27 +948,27 @@ function initializeMemoryGame() {
         }
 
         secondCard = card;
-        boardLocked = true;
+        locked = true;
         moves += 1;
 
         updateStatus();
-        checkCards();
+        compareCards();
     };
 
     const buildGame = () => {
         firstCard = null;
         secondCard = null;
-        boardLocked = false;
+        locked = false;
         moves = 0;
         matchedPairs = 0;
-
         messageElement.textContent = '';
 
-        const selectedCharacters = shuffle(
-            availableCharacters
-        ).slice(0, 6);
+        const selectedCharacters = shuffle(characters).slice(
+            0,
+            6
+        );
 
-        pairGoal = selectedCharacters.length;
+        totalPairs = selectedCharacters.length;
 
         const cards = shuffle(
             selectedCharacters.flatMap((character) => [
@@ -1026,7 +983,7 @@ function initializeMemoryGame() {
             ])
         );
 
-        memoryBoard.innerHTML = '';
+        board.innerHTML = '';
 
         cards.forEach((character, index) => {
             const card = document.createElement('button');
@@ -1034,7 +991,6 @@ function initializeMemoryGame() {
             card.type = 'button';
             card.className = 'memory-card';
             card.dataset.character = character.key;
-
             card.setAttribute(
                 'aria-label',
                 `Carta ${index + 1}. Clique para virar.`
@@ -1050,7 +1006,7 @@ function initializeMemoryGame() {
                     <span class="memory-card-back">
                         <img
                             src="${character.image}"
-                            alt="${character.name}"
+                            alt="${escapeHtml(character.name)}"
                             draggable="false"
                         >
                     </span>
@@ -1061,41 +1017,30 @@ function initializeMemoryGame() {
                 handleCardClick(card);
             });
 
-            memoryBoard.appendChild(card);
+            board.appendChild(card);
         });
 
         updateStatus();
-        gameStarted = true;
+        gameBuilt = true;
     };
 
     openButton.addEventListener('click', () => {
-        memorySection.classList.remove('game-hidden');
-        memorySection.classList.add('is-visible');
+        section.classList.remove('game-hidden');
+        section.classList.add('is-visible');
 
-        if (!gameStarted) {
+        if (!gameBuilt) {
             buildGame();
         }
 
         window.setTimeout(() => {
-            memorySection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            scrollToElement(section);
         }, 50);
     });
 
     closeButton.addEventListener('click', () => {
-        memorySection.classList.remove('is-visible');
-        memorySection.classList.add('game-hidden');
-
-        const gamesSection = document.getElementById('jogos');
-
-        if (gamesSection) {
-            gamesSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        section.classList.remove('is-visible');
+        section.classList.add('game-hidden');
+        scrollToElement(document.getElementById('jogos'));
     });
 
     restartButton.addEventListener('click', buildGame);
@@ -1106,34 +1051,21 @@ function initializeMemoryGame() {
 ========================================================= */
 
 function initializeColoringGame() {
-    const canvas = document.getElementById(
-        'coloringCanvas'
-    );
-
+    const canvas = document.getElementById('coloringCanvas');
     const characterButtons = document.querySelectorAll(
         '.coloring-character'
     );
-
     const colorButtons = document.querySelectorAll(
         '.color-option'
     );
-
-    const customColor = document.getElementById(
-        'customColor'
-    );
-
-    const brushSize = document.getElementById(
-        'brushSize'
-    );
-
+    const customColor = document.getElementById('customColor');
+    const brushSize = document.getElementById('brushSize');
     const clearButton = document.getElementById(
         'clearColoringButton'
     );
-
     const printButton = document.getElementById(
         'printColoringButton'
     );
-
     const saveButton = document.getElementById(
         'saveColoringButton'
     );
@@ -1156,7 +1088,7 @@ function initializeColoringGame() {
         return;
     }
 
-    const coloringCharacters = {
+    const characters = {
         popit: {
             name: 'Capitão Pop It',
             fileName: 'capitao-pop-it',
@@ -1190,20 +1122,14 @@ function initializeColoringGame() {
     const getCanvasPosition = (event) => {
         const rectangle = canvas.getBoundingClientRect();
 
-        const scaleX =
-            canvas.width / rectangle.width;
-
-        const scaleY =
-            canvas.height / rectangle.height;
-
         return {
             x:
                 (event.clientX - rectangle.left) *
-                scaleX,
+                (canvas.width / rectangle.width),
 
             y:
                 (event.clientY - rectangle.top) *
-                scaleY
+                (canvas.height / rectangle.height)
         };
     };
 
@@ -1227,35 +1153,21 @@ function initializeColoringGame() {
         );
 
         if (currentImage) {
-            const availableWidth =
-                canvas.width * 0.82;
-
-            const availableHeight =
-                canvas.height * 0.82;
+            const availableWidth = canvas.width * 0.82;
+            const availableHeight = canvas.height * 0.82;
 
             const scale = Math.min(
-                availableWidth /
-                    currentImage.naturalWidth,
-
-                availableHeight /
-                    currentImage.naturalHeight
+                availableWidth / currentImage.naturalWidth,
+                availableHeight / currentImage.naturalHeight
             );
 
-            const width =
-                currentImage.naturalWidth * scale;
-
-            const height =
-                currentImage.naturalHeight * scale;
-
-            const x =
-                (canvas.width - width) / 2;
-
-            const y =
-                (canvas.height - height) / 2;
+            const width = currentImage.naturalWidth * scale;
+            const height = currentImage.naturalHeight * scale;
+            const x = (canvas.width - width) / 2;
+            const y = (canvas.height - height) / 2;
 
             context.globalAlpha = 0.28;
-            context.filter =
-                'grayscale(1) contrast(1.35)';
+            context.filter = 'grayscale(1) contrast(1.35)';
 
             context.drawImage(
                 currentImage,
@@ -1273,8 +1185,7 @@ function initializeColoringGame() {
     };
 
     const loadCharacter = (characterKey) => {
-        const character =
-            coloringCharacters[characterKey];
+        const character = characters[characterKey];
 
         if (!character) {
             return;
@@ -1284,12 +1195,12 @@ function initializeColoringGame() {
 
         const image = new Image();
 
-        image.onload = () => {
+        image.addEventListener('load', () => {
             currentImage = image;
             drawBaseImage();
-        };
+        });
 
-        image.onerror = () => {
+        image.addEventListener('error', () => {
             currentImage = null;
 
             context.clearRect(
@@ -1317,14 +1228,14 @@ function initializeColoringGame() {
                 canvas.width / 2,
                 canvas.height / 2
             );
-        };
+        });
 
         image.src = character.image;
     };
 
     const startDrawing = (event) => {
         if (
-            event.button !== undefined &&
+            typeof event.button === 'number' &&
             event.button !== 0
         ) {
             return;
@@ -1334,32 +1245,25 @@ function initializeColoringGame() {
 
         isDrawing = true;
 
-        canvas.setPointerCapture?.(
-            event.pointerId
-        );
+        if (
+            typeof canvas.setPointerCapture === 'function' &&
+            typeof event.pointerId === 'number'
+        ) {
+            canvas.setPointerCapture(event.pointerId);
+        }
 
-        const position =
-            getCanvasPosition(event);
+        const position = getCanvasPosition(event);
 
         context.beginPath();
-
-        context.moveTo(
-            position.x,
-            position.y
-        );
-
+        context.moveTo(position.x, position.y);
         context.lineCap = 'round';
         context.lineJoin = 'round';
         context.strokeStyle = selectedColor;
-        context.lineWidth = Number(
-            brushSize.value
-        );
-
+        context.lineWidth = Number(brushSize.value);
         context.lineTo(
             position.x + 0.01,
             position.y + 0.01
         );
-
         context.stroke();
     };
 
@@ -1370,14 +1274,9 @@ function initializeColoringGame() {
 
         event.preventDefault();
 
-        const position =
-            getCanvasPosition(event);
+        const position = getCanvasPosition(event);
 
-        context.lineTo(
-            position.x,
-            position.y
-        );
-
+        context.lineTo(position.x, position.y);
         context.stroke();
     };
 
@@ -1390,42 +1289,28 @@ function initializeColoringGame() {
         context.closePath();
 
         if (
-            event?.pointerId !== undefined
+            event &&
+            typeof event.pointerId === 'number' &&
+            typeof canvas.releasePointerCapture === 'function'
         ) {
-            canvas.releasePointerCapture?.(
-                event.pointerId
-            );
+            try {
+                canvas.releasePointerCapture(event.pointerId);
+            } catch {
+                // O ponteiro pode já ter sido liberado.
+            }
         }
     };
 
-    canvas.addEventListener(
-        'pointerdown',
-        startDrawing
-    );
+    canvas.addEventListener('pointerdown', startDrawing);
+    canvas.addEventListener('pointermove', continueDrawing);
+    canvas.addEventListener('pointerup', stopDrawing);
+    canvas.addEventListener('pointercancel', stopDrawing);
 
-    canvas.addEventListener(
-        'pointermove',
-        continueDrawing
-    );
-
-    canvas.addEventListener(
-        'pointerup',
-        stopDrawing
-    );
-
-    canvas.addEventListener(
-        'pointercancel',
-        stopDrawing
-    );
-
-    canvas.addEventListener(
-        'pointerleave',
-        (event) => {
-            if (event.buttons === 0) {
-                stopDrawing(event);
-            }
+    canvas.addEventListener('pointerleave', (event) => {
+        if (event.buttons === 0) {
+            stopDrawing(event);
         }
-    );
+    });
 
     characterButtons.forEach((button) => {
         button.addEventListener('click', () => {
@@ -1444,8 +1329,7 @@ function initializeColoringGame() {
     colorButtons.forEach((button) => {
         button.addEventListener('click', () => {
             selectedColor =
-                button.dataset.color ||
-                selectedColor;
+                button.dataset.color || selectedColor;
 
             customColor.value = selectedColor;
 
@@ -1465,36 +1349,47 @@ function initializeColoringGame() {
         });
     });
 
-    clearButton.addEventListener(
-        'click',
-        drawBaseImage
-    );
+    clearButton.addEventListener('click', drawBaseImage);
 
     saveButton.addEventListener('click', () => {
-        const character =
-            coloringCharacters[selectedCharacter];
+        const character = characters[selectedCharacter];
+        const link = document.createElement('a');
 
-        const link =
-            document.createElement('a');
-
-        link.href =
-            canvas.toDataURL('image/png');
+        try {
+            link.href = canvas.toDataURL('image/png');
+        } catch (error) {
+            console.error(
+                'Não foi possível salvar o desenho:',
+                error
+            );
+            window.alert(
+                'Não foi possível salvar o desenho.'
+            );
+            return;
+        }
 
         link.download =
             `desenho-${character.fileName}.png`;
 
         document.body.appendChild(link);
-
         link.click();
         link.remove();
     });
 
     printButton.addEventListener('click', () => {
-        const imageData =
-            canvas.toDataURL('image/png');
+        const character = characters[selectedCharacter];
+        let imageData = '';
 
-        const character =
-            coloringCharacters[selectedCharacter];
+        try {
+            imageData = canvas.toDataURL('image/png');
+        } catch (error) {
+            console.error(
+                'Não foi possível preparar a impressão:',
+                error
+            );
+            window.print();
+            return;
+        }
 
         const printWindow = window.open(
             '',
@@ -1507,16 +1402,16 @@ function initializeColoringGame() {
             return;
         }
 
+        printWindow.document.open();
+
         printWindow.document.write(`
             <!DOCTYPE html>
-
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-
                 <title>
                     Desenho para colorir -
-                    ${character.name}
+                    ${escapeHtml(character.name)}
                 </title>
 
                 <style>
@@ -1549,20 +1444,18 @@ function initializeColoringGame() {
                         body {
                             padding: 0;
                         }
-
-                        h1 {
-                            margin-bottom: 10px;
-                        }
                     }
                 </style>
             </head>
 
             <body>
-                <h1>${character.name}</h1>
+                <h1>${escapeHtml(character.name)}</h1>
 
                 <img
                     src="${imageData}"
-                    alt="Desenho de ${character.name}"
+                    alt="Desenho de ${escapeHtml(
+                        character.name
+                    )}"
                 >
             </body>
             </html>
@@ -1570,22 +1463,14 @@ function initializeColoringGame() {
 
         printWindow.document.close();
 
-        printWindow.addEventListener(
-            'load',
-            () => {
-                printWindow.focus();
-                printWindow.print();
-            }
-        );
+        window.setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 400);
     });
 
-    const firstColorButton =
-        colorButtons[0];
-
-    if (firstColorButton) {
-        firstColorButton.classList.add(
-            'active'
-        );
+    if (colorButtons[0]) {
+        colorButtons[0].classList.add('active');
     }
 
     loadCharacter(selectedCharacter);
