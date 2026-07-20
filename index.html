@@ -52,9 +52,9 @@
         href="img/logos/logo-capitao-popit.png"
     >
 
-    <link rel="stylesheet" href="style.css?v=50">
+    <link rel="stylesheet" href="style.css?v=60">
 
-    <script src="script.js?v=50" defer></script>
+    <script src="script.js?v=60" defer></script>
 </head>
 
 <body>
@@ -127,97 +127,237 @@
     <main id="conteudoPrincipal">
 
         <!-- =================================================
-             HERO / ABERTURA
+             PORTAL POP IT INTERATIVO
         ================================================== -->
 
-        <section class="hero-section">
+        <section
+            class="hero-section portal-hero"
+            aria-labelledby="portalHeroTitle"
+        >
+            <div class="portal-background" aria-hidden="true">
+                <span class="portal-light portal-light-one"></span>
+                <span class="portal-light portal-light-two"></span>
+                <span class="portal-light portal-light-three"></span>
 
-            <div class="hero-decoration hero-decoration-one"></div>
-            <div class="hero-decoration hero-decoration-two"></div>
-            <div class="hero-decoration hero-decoration-three"></div>
+                <span class="portal-star portal-star-one">★</span>
+                <span class="portal-star portal-star-two">✦</span>
+                <span class="portal-star portal-star-three">★</span>
+                <span class="portal-star portal-star-four">✦</span>
+                <span class="portal-star portal-star-five">★</span>
+                <span class="portal-star portal-star-six">✦</span>
 
-            <div class="floating-pop floating-pop-one"></div>
-            <div class="floating-pop floating-pop-two"></div>
-            <div class="floating-pop floating-pop-three"></div>
+                <span class="portal-pop portal-pop-one"></span>
+                <span class="portal-pop portal-pop-two"></span>
+                <span class="portal-pop portal-pop-three"></span>
+                <span class="portal-pop portal-pop-four"></span>
+                <span class="portal-pop portal-pop-five"></span>
+            </div>
 
-            <div class="hero-container">
+            <div class="hero-container portal-hero-container">
 
-                <div class="hero-content">
+                <div class="hero-content portal-hero-content">
 
                     <span class="section-tag">
-                        Uma aventura cheia de cores
+                        Bem-vindo à Central Pop It
                     </span>
 
-                    <h1>
-                        Entre no mundo do
+                    <h1 id="portalHeroTitle">
+                        Entre no portal do
                         <strong>Capitão Pop It!</strong>
                     </h1>
 
                     <p>
-                        Histórias, brincadeiras, personagens e aprendizados
+                        Ative o Pop Alerta e descubra um universo de
+                        histórias, personagens, brincadeiras e aprendizados
                         para crianças de 2 a 6 anos.
                     </p>
 
-                    <div class="hero-buttons">
+                    <div class="portal-action-area">
+
+                        <button
+                            type="button"
+                            class="button button-primary portal-activate-button"
+                            id="activatePopAlertButton"
+                            aria-controls="popPortalStage"
+                            aria-expanded="false"
+                        >
+                            <span class="portal-button-icon" aria-hidden="true">
+                                ⚡
+                            </span>
+
+                            <span>Ativar Pop Alerta</span>
+                        </button>
 
                         <a
                             href="#personagens"
-                            class="button button-primary"
+                            class="button button-secondary"
                         >
                             Conheça a turma
                         </a>
 
-                        <a
-                            href="#jogos"
-                            class="button button-secondary"
-                        >
-                            Jogar agora
-                        </a>
-
                     </div>
 
-                    <div class="hero-highlights">
+                    <div class="portal-hero-highlights">
 
                         <div class="hero-highlight">
                             <span class="hero-highlight-icon">★</span>
-
-                            <span>
-                                Conteúdo educativo
-                            </span>
+                            <span>Conteúdo educativo</span>
                         </div>
 
                         <div class="hero-highlight">
                             <span class="hero-highlight-icon">♥</span>
+                            <span>Diversão para a família</span>
+                        </div>
 
-                            <span>
-                                Diversão para a família
-                            </span>
+                        <div class="hero-highlight">
+                            <span class="hero-highlight-icon">✦</span>
+                            <span>Aventuras interativas</span>
                         </div>
 
                     </div>
 
-                </div>
+                    <div
+                        class="portal-success-message"
+                        id="portalSuccessMessage"
+                        role="status"
+                        aria-live="polite"
+                        hidden
+                    >
+                        <strong>Pop Alerta ativado!</strong>
 
-                <div class="hero-image-area">
-
-                    <div class="hero-message">
-                        <strong>Pop Alerta!</strong>
-                        <span>Uma nova aventura vai começar!</span>
+                        <span>
+                            Todo Pop-Problema pode virar uma grande aventura!
+                        </span>
                     </div>
 
-                    <div class="hero-character-background"></div>
+                </div>
+
+                <div
+                    class="portal-stage"
+                    id="popPortalStage"
+                    data-portal-stage
+                >
+                    <div
+                        class="portal-energy-layer"
+                        id="portalEnergyLayer"
+                        aria-hidden="true"
+                    ></div>
+
+                    <div
+                        class="portal-orbit portal-orbit-outer"
+                        data-portal-depth="0.15"
+                        aria-hidden="true"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div
+                        class="portal-orbit portal-orbit-middle"
+                        data-portal-depth="0.25"
+                        aria-hidden="true"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div
+                        class="portal-orbit portal-orbit-inner"
+                        data-portal-depth="0.35"
+                        aria-hidden="true"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div
+                        class="portal-core"
+                        data-portal-depth="0.08"
+                        aria-hidden="true"
+                    >
+                        <div class="portal-core-glow"></div>
+
+                        <img
+                            src="img/logos/logo-capitao-popit.png"
+                            alt=""
+                        >
+                    </div>
 
                     <img
-                        class="hero-character-image"
+                        class="portal-character portal-popit-character"
                         src="img/personagens/popit.png"
-                        alt="Capitão Pop It, personagem principal"
+                        alt="Capitão Pop It"
+                        data-portal-depth="0.55"
                     >
+
+                    <img
+                        class="portal-character portal-miss-pop-character"
+                        src="img/personagens/miss-pop.png"
+                        alt="Miss Pop"
+                        data-portal-depth="0.48"
+                    >
+
+                    <img
+                        class="portal-character portal-cloud-character"
+                        src="img/personagens/cloud.png"
+                        alt="Cloud"
+                        data-portal-depth="0.75"
+                    >
+
+                    <img
+                        class="portal-character portal-balloon-character"
+                        src="img/personagens/helio-balao.png"
+                        alt="Balão Hélio"
+                        data-portal-depth="0.68"
+                    >
+
+                    <div
+                        class="portal-alert-card"
+                        id="portalAlertCard"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        <span
+                            class="portal-alert-light"
+                            aria-hidden="true"
+                        ></span>
+
+                        <strong>POP ALERTA!</strong>
+
+                        <span>
+                            Uma nova aventura está prestes a começar!
+                        </span>
+                    </div>
+
+                    <div
+                        class="portal-burst-layer"
+                        id="portalBurstLayer"
+                        aria-hidden="true"
+                    ></div>
 
                 </div>
 
             </div>
 
-            <div class="hero-bottom-wave"></div>
+            <a
+                href="#universo"
+                class="portal-scroll-hint"
+                aria-label="Continuar para a próxima seção"
+            >
+                <span>Descubra o universo</span>
+                <strong aria-hidden="true">↓</strong>
+            </a>
+
+            <div class="hero-bottom-wave" aria-hidden="true"></div>
 
         </section>
 

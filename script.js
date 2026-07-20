@@ -3,7 +3,7 @@
 /* =========================================================
    CAPITÃO POP IT
    ARQUIVO: script.js
-   VERSÃO COM QUEBRA-CABEÇA
+   VERSÃO COM PORTAL INTERATIVO E QUEBRA-CABEÇA
 ========================================================= */
 
 function initializeSite() {
@@ -11,6 +11,7 @@ function initializeSite() {
         initializeCurrentYear,
         initializeMobileMenu,
         initializeBackToTop,
+        initializePortalExperience,
         initializeCharacterModal,
         initializeStoryModal,
         initializeInteractiveStory,
@@ -67,6 +68,366 @@ function escapeHtml(value) {
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+}
+
+
+/* =========================================================
+   PORTAL POP IT INTERATIVO
+========================================================= */
+
+function initializePortalExperience() {
+    const stage = document.getElementById('popPortalStage');
+    const activateButton = document.getElementById(
+        'activatePopAlertButton'
+    );
+    const successMessage = document.getElementById(
+        'portalSuccessMessage'
+    );
+    const alertCard = document.getElementById(
+        'portalAlertCard'
+    );
+    const burstLayer = document.getElementById(
+        'portalBurstLayer'
+    );
+    const energyLayer = document.getElementById(
+        'portalEnergyLayer'
+    );
+
+    if (
+        !stage ||
+        !activateButton ||
+        !successMessage ||
+        !alertCard ||
+        !burstLayer ||
+        !energyLayer
+    ) {
+        return;
+    }
+
+    if (stage.dataset.portalInitialized === 'true') {
+        return;
+    }
+
+    stage.dataset.portalInitialized = 'true';
+
+    const depthElements = Array.from(
+        stage.querySelectorAll('[data-portal-depth]')
+    );
+
+    const buttonText = activateButton.querySelector(
+        'span:last-child'
+    );
+
+    const alertText = alertCard.querySelector(
+        'span:last-child'
+    );
+
+    const reducedMotionQuery = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+    );
+
+    const finePointerQuery = window.matchMedia(
+        '(pointer: fine)'
+    );
+
+    const particleColors = [
+        '#ffe115',
+        '#ffad13',
+        '#ff3b4d',
+        '#ff82c6',
+        '#8f22d4',
+        '#d7a5ff',
+        '#20bfe3',
+        '#8edb12'
+    ];
+
+    let animationFrame = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let activationTimer = 0;
+
+    const applyDepthMovement = (x, y) => {
+        depthElements.forEach((element) => {
+            const depth = Number(
+                element.dataset.portalDepth || 0
+            );
+
+            const movementX = x * depth;
+            const movementY = y * depth;
+
+            element.style.setProperty(
+                '--portal-move-x',
+                `${movementX.toFixed(2)}px`
+            );
+
+            element.style.setProperty(
+                '--portal-move-y',
+                `${movementY.toFixed(2)}px`
+            );
+        });
+    };
+
+    const animateParallax = () => {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+
+        applyDepthMovement(currentX, currentY);
+
+        const stillMoving =
+            Math.abs(targetX - currentX) > 0.05 ||
+            Math.abs(targetY - currentY) > 0.05;
+
+        if (stillMoving) {
+            animationFrame = window.requestAnimationFrame(
+                animateParallax
+            );
+        } else {
+            animationFrame = 0;
+        }
+    };
+
+    const requestParallaxUpdate = () => {
+        if (animationFrame !== 0) {
+            return;
+        }
+
+        animationFrame = window.requestAnimationFrame(
+            animateParallax
+        );
+    };
+
+    const resetParallax = () => {
+        targetX = 0;
+        targetY = 0;
+        requestParallaxUpdate();
+    };
+
+    const handlePointerMove = (event) => {
+        if (
+            reducedMotionQuery.matches ||
+            !finePointerQuery.matches
+        ) {
+            return;
+        }
+
+        const rectangle = stage.getBoundingClientRect();
+
+        if (
+            rectangle.width === 0 ||
+            rectangle.height === 0
+        ) {
+            return;
+        }
+
+        const normalizedX =
+            (
+                event.clientX -
+                rectangle.left
+            ) /
+                rectangle.width -
+            0.5;
+
+        const normalizedY =
+            (
+                event.clientY -
+                rectangle.top
+            ) /
+                rectangle.height -
+            0.5;
+
+        targetX = normalizedX * 28;
+        targetY = normalizedY * 24;
+
+        requestParallaxUpdate();
+    };
+
+    const clearParticles = () => {
+        burstLayer.replaceChildren();
+    };
+
+    const createParticleBurst = () => {
+        clearParticles();
+
+        const particleCount =
+            reducedMotionQuery.matches ? 12 : 38;
+
+        const fragment =
+            document.createDocumentFragment();
+
+        for (
+            let index = 0;
+            index < particleCount;
+            index += 1
+        ) {
+            const particle =
+                document.createElement('span');
+
+            const angle =
+                (
+                    Math.PI * 2 * index
+                ) /
+                    particleCount +
+                Math.random() * 0.28;
+
+            const distance =
+                reducedMotionQuery.matches
+                    ? 95 + Math.random() * 45
+                    : 150 + Math.random() * 190;
+
+            const size =
+                8 + Math.random() * 13;
+
+            const duration =
+                760 + Math.random() * 520;
+
+            const rotation =
+                -240 + Math.random() * 480;
+
+            const color =
+                particleColors[
+                    Math.floor(
+                        Math.random() *
+                            particleColors.length
+                    )
+                ];
+
+            const burstX =
+                Math.cos(angle) * distance;
+
+            const burstY =
+                Math.sin(angle) * distance;
+
+            particle.className =
+                'portal-burst-particle';
+
+            particle.style.setProperty(
+                '--particle-size',
+                `${size.toFixed(1)}px`
+            );
+
+            particle.style.setProperty(
+                '--particle-color',
+                color
+            );
+
+            particle.style.setProperty(
+                '--particle-duration',
+                `${duration.toFixed(0)}ms`
+            );
+
+            particle.style.setProperty(
+                '--burst-x',
+                `${burstX.toFixed(1)}px`
+            );
+
+            particle.style.setProperty(
+                '--burst-y',
+                `${burstY.toFixed(1)}px`
+            );
+
+            particle.style.setProperty(
+                '--burst-rotation',
+                `${rotation.toFixed(0)}deg`
+            );
+
+            fragment.appendChild(particle);
+        }
+
+        burstLayer.appendChild(fragment);
+
+        window.setTimeout(
+            clearParticles,
+            1500
+        );
+    };
+
+    const restartActivationAnimation = () => {
+        stage.classList.remove('is-activated');
+
+        void stage.offsetWidth;
+
+        stage.classList.add('is-activated');
+    };
+
+    const activatePortal = () => {
+        restartActivationAnimation();
+        createParticleBurst();
+
+        activateButton.classList.add('is-active');
+        activateButton.setAttribute(
+            'aria-expanded',
+            'true'
+        );
+
+        if (buttonText) {
+            buttonText.textContent =
+                'Pop Alerta ativado!';
+        }
+
+        if (alertText) {
+            alertText.textContent =
+                'A Central Pop It está pronta para a aventura!';
+        }
+
+        successMessage.hidden = false;
+
+        window.clearTimeout(activationTimer);
+
+        activationTimer = window.setTimeout(
+            () => {
+                stage.classList.add('is-activated');
+            },
+            900
+        );
+    };
+
+    stage.addEventListener(
+        'pointermove',
+        handlePointerMove,
+        { passive: true }
+    );
+
+    stage.addEventListener(
+        'pointerleave',
+        resetParallax,
+        { passive: true }
+    );
+
+    stage.addEventListener(
+        'pointercancel',
+        resetParallax,
+        { passive: true }
+    );
+
+    activateButton.addEventListener(
+        'click',
+        activatePortal
+    );
+
+    window.addEventListener(
+        'blur',
+        resetParallax
+    );
+
+    reducedMotionQuery.addEventListener?.(
+        'change',
+        () => {
+            resetParallax();
+
+            if (reducedMotionQuery.matches) {
+                clearParticles();
+            }
+        }
+    );
+
+    finePointerQuery.addEventListener?.(
+        'change',
+        resetParallax
+    );
+
+    applyDepthMovement(0, 0);
 }
 
 /* =========================================================
