@@ -1792,7 +1792,7 @@ input:focus-visible {
     transform: translateY(-10px) rotate(-1deg);
 }
 
-.game-card-memory {
+.game-card-puzzle {
     background:
         linear-gradient(
             145deg,
@@ -1862,195 +1862,395 @@ input:focus-visible {
 }
 
 /* =========================================================
-   JOGO DA MEMÓRIA
+   QUEBRA-CABEÇA POP IT
 ========================================================= */
 
 .game-hidden {
     display: none;
 }
 
-.memory-game-section {
+.puzzle-game-section {
+    color: var(--white);
     background:
+        radial-gradient(
+            circle at 10% 15%,
+            rgba(255, 225, 21, 0.18),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 92% 84%,
+            rgba(32, 191, 227, 0.2),
+            transparent 27%
+        ),
         linear-gradient(
             145deg,
-            #57217e,
+            #452069,
+            #7627b0 48%,
             #8f22d4
         );
 }
 
-.memory-game-section.is-visible {
+.puzzle-game-section.is-visible {
     display: block;
     animation: sectionReveal 0.5s ease;
 }
 
-.memory-game-header {
+.puzzle-game-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 25px;
+    gap: 28px;
     margin-bottom: 30px;
 }
 
-.memory-game-header .section-tag {
-    color: var(--white);
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.18);
+.puzzle-game-header > div {
+    max-width: 760px;
 }
 
-.memory-game-header h2 {
-    margin-bottom: 0;
+.puzzle-game-header .section-tag {
     color: var(--white);
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.puzzle-game-header h2 {
+    margin-bottom: 12px;
+    color: var(--white);
+    font-size: clamp(2.2rem, 4vw, 3.7rem);
+    font-weight: 900;
+}
+
+.puzzle-game-header p {
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.03rem;
 }
 
 .close-game-button {
+    flex: 0 0 auto;
     min-height: 46px;
-    padding: 11px 18px;
+    padding: 11px 20px;
     color: var(--purple-dark);
     background: var(--white);
     border-radius: var(--radius-round);
     cursor: pointer;
     font-weight: 900;
+    box-shadow: 0 6px 0 rgba(51, 15, 82, 0.4);
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
 }
 
-.memory-game-status {
+.close-game-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 0 rgba(51, 15, 82, 0.4);
+}
+
+.puzzle-character-selector {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.puzzle-character-option {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 78px;
+    padding: 9px 12px;
+    color: var(--text-dark);
+    background: rgba(255, 255, 255, 0.93);
+    border: 3px solid transparent;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 900;
+    text-align: left;
+    box-shadow: 0 7px 0 rgba(51, 15, 82, 0.32);
+    transition:
+        transform var(--transition),
+        border-color var(--transition),
+        background var(--transition),
+        box-shadow var(--transition);
+}
+
+.puzzle-character-option:hover {
+    background: var(--white);
+    border-color: var(--yellow);
+    transform: translateY(-3px);
+}
+
+.puzzle-character-option.active {
+    color: var(--purple-dark);
+    background: #fff8c8;
+    border-color: var(--yellow);
+    box-shadow:
+        0 6px 0 var(--yellow-dark),
+        0 14px 25px rgba(30, 15, 60, 0.2);
+}
+
+.puzzle-character-option img {
+    width: 58px;
+    height: 58px;
+    padding: 4px;
+    object-fit: contain;
+    background: var(--white);
+    border-radius: 15px;
+}
+
+.puzzle-character-option span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+}
+
+.puzzle-game-status {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 28px;
-    padding: 18px 22px;
+    gap: 15px;
+    margin-bottom: 26px;
+    padding: 17px 20px;
     color: var(--white);
     background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 255, 255, 0.16);
+    border: 2px solid rgba(255, 255, 255, 0.17);
     border-radius: 22px;
 }
 
-.memory-game-status span {
+.puzzle-game-status span {
     font-weight: 800;
 }
 
-.memory-game-status strong {
+.puzzle-game-status strong {
     color: var(--yellow);
 }
 
-.memory-game-status button {
-    min-height: 40px;
-    margin-left: auto;
+.puzzle-game-status button {
+    min-height: 42px;
     padding: 9px 17px;
-    color: var(--text-dark);
-    background: var(--yellow);
     border-radius: var(--radius-round);
     cursor: pointer;
     font-weight: 900;
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition);
 }
 
-.memory-board {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(100px, 1fr));
-    gap: 18px;
-    max-width: 850px;
-    margin-inline: auto;
-    perspective: 1000px;
+.puzzle-game-status button:hover {
+    transform: translateY(-3px);
 }
 
-.memory-card {
-    position: relative;
-    aspect-ratio: 1 / 1.08;
-    border-radius: 23px;
-    cursor: pointer;
-    transform-style: preserve-3d;
+#shufflePuzzleButton {
+    margin-left: auto;
+    color: var(--text-dark);
+    background: var(--yellow);
+    box-shadow: 0 5px 0 var(--yellow-dark);
 }
 
-.memory-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.55s ease;
-    transform-style: preserve-3d;
+#previewPuzzleButton {
+    color: var(--purple-dark);
+    background: var(--white);
+    box-shadow: 0 5px 0 rgba(255, 255, 255, 0.35);
 }
 
-.memory-card.is-flipped .memory-card-inner,
-.memory-card.is-matched .memory-card-inner {
-    transform: rotateY(180deg);
-}
-
-.memory-card-front,
-.memory-card-back {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-radius: 23px;
-    box-shadow: 0 10px 0 rgba(51, 15, 82, 0.5);
-    backface-visibility: hidden;
-}
-
-.memory-card-front {
+#previewPuzzleButton[aria-pressed="true"] {
     color: var(--white);
+    background: var(--blue);
+    box-shadow: 0 5px 0 var(--blue-dark);
+}
+
+.puzzle-game-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 760px);
+    justify-content: center;
+    align-items: start;
+    gap: 24px;
+}
+
+.puzzle-game-layout.preview-visible {
+    grid-template-columns:
+        minmax(0, 760px)
+        minmax(250px, 320px);
+}
+
+.puzzle-board-area {
+    min-width: 0;
+}
+
+.puzzle-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    width: min(100%, 760px);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    padding: 9px;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.25),
+            rgba(255, 255, 255, 0.1)
+        );
+    border: 5px solid rgba(255, 255, 255, 0.72);
+    border-radius: 28px;
+    box-shadow:
+        0 14px 0 rgba(51, 15, 82, 0.5),
+        0 28px 48px rgba(30, 15, 60, 0.3);
+}
+
+.puzzle-piece {
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 1;
+    overflow: hidden;
+    padding: 0;
+    background-color: var(--white);
+    background-repeat: no-repeat;
+    background-size: 300% 300%;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow:
+        inset 0 0 0 1px rgba(37, 50, 74, 0.08),
+        0 5px 10px rgba(30, 15, 60, 0.18);
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+}
+
+.puzzle-piece:hover {
+    z-index: 2;
+    border-color: var(--blue-light);
+    transform: translateY(-3px) scale(1.015);
+}
+
+.puzzle-piece.is-selected {
+    z-index: 3;
+    border-color: var(--yellow);
+    box-shadow:
+        0 0 0 5px rgba(255, 225, 21, 0.32),
+        0 8px 18px rgba(30, 15, 60, 0.28);
+    transform: scale(0.96);
+}
+
+.puzzle-piece.is-correct::after {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    color: var(--white);
+    background: var(--green-dark);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+    content: "✓";
+    font-size: 0.82rem;
+    font-weight: 900;
+    box-shadow: 0 4px 10px rgba(37, 50, 74, 0.2);
+}
+
+.puzzle-board.is-complete {
+    border-color: var(--yellow);
+    box-shadow:
+        0 0 0 8px rgba(255, 225, 21, 0.22),
+        0 14px 0 var(--yellow-dark),
+        0 30px 55px rgba(30, 15, 60, 0.34);
+    animation: puzzleCelebrate 0.7s ease;
+}
+
+.puzzle-message {
+    min-height: 38px;
+    margin-top: 28px;
+    color: var(--white);
+    font-size: 1.18rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.puzzle-message.success {
+    display: block;
+    padding: 16px 20px;
+    color: #2d6500;
+    background: var(--green-light);
+    border: 3px solid var(--green);
+    border-radius: 18px;
+}
+
+.puzzle-preview-card {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    color: var(--text-dark);
+    background: var(--white);
+    border: 5px solid var(--yellow);
+    border-radius: 26px;
+    box-shadow:
+        0 10px 0 var(--yellow-dark),
+        0 22px 38px rgba(30, 15, 60, 0.25);
+}
+
+.puzzle-preview-card.is-visible {
+    display: flex;
+    animation: resultAppear 0.35s ease;
+}
+
+.puzzle-preview-card > span {
+    color: var(--purple-dark);
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.puzzle-preview-image-area {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
     background:
         radial-gradient(
             circle at center,
-            rgba(255, 255, 255, 0.13) 0 18%,
-            transparent 19%
-        ),
-        linear-gradient(
-            135deg,
-            var(--blue),
-            var(--purple)
+            rgba(255, 255, 255, 0.95),
+            rgba(223, 242, 255, 0.9) 65%,
+            #d9cbff
         );
-    border: 5px solid rgba(255, 255, 255, 0.65);
+    border: 3px solid rgba(143, 34, 212, 0.14);
+    border-radius: 20px;
 }
 
-.memory-card-front::before {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 66%;
-    aspect-ratio: 1;
-    color: var(--white);
-    background: rgba(255, 255, 255, 0.14);
-    border: 6px dotted rgba(255, 255, 255, 0.55);
-    border-radius: 50%;
-    content: "?";
-    font-size: clamp(2rem, 5vw, 4rem);
-    font-weight: 900;
-}
-
-.memory-card-back {
-    padding: 10px;
-    background: var(--white);
-    border: 5px solid var(--yellow);
-    transform: rotateY(180deg);
-}
-
-.memory-card-back img {
+.puzzle-preview-image-area img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-.memory-card.is-matched {
-    pointer-events: none;
-}
-
-.memory-card.is-matched .memory-card-back {
-    border-color: var(--green);
-    box-shadow:
-        0 0 0 7px rgba(142, 219, 18, 0.24),
-        0 10px 0 var(--green-dark);
-}
-
-.memory-message {
-    min-height: 36px;
-    margin-top: 28px;
-    color: var(--white);
-    font-size: 1.15rem;
-    font-weight: 900;
+.puzzle-preview-card p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
     text-align: center;
 }
+
+@keyframes puzzleCelebrate {
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.025) rotate(-0.5deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 
 /* =========================================================
    COLORIR
@@ -2562,7 +2762,18 @@ input:focus-visible {
 ========================================================= */
 
 .contact-section {
+    overflow: hidden;
     background:
+        radial-gradient(
+            circle at 10% 18%,
+            rgba(255, 225, 21, 0.22),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 88% 82%,
+            rgba(143, 34, 212, 0.14),
+            transparent 27%
+        ),
         linear-gradient(
             145deg,
             #fff4a7,
@@ -2572,50 +2783,136 @@ input:focus-visible {
 
 .contact-card {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    align-items: center;
-    min-height: 470px;
+    grid-template-columns:
+        minmax(0, 1.25fr)
+        minmax(330px, 0.75fr);
+    align-items: stretch;
+    min-height: 530px;
     overflow: hidden;
     background: var(--white);
-    border: 7px solid rgba(255, 255, 255, 0.7);
+    border: 7px solid rgba(255, 255, 255, 0.76);
     border-radius: 42px;
     box-shadow: var(--shadow-large);
 }
 
 .contact-content {
-    padding: clamp(38px, 7vw, 75px);
+    min-width: 0;
+    padding: clamp(42px, 6vw, 72px);
+}
+
+.contact-content .section-tag {
+    max-width: 100%;
 }
 
 .contact-content h2 {
+    max-width: 760px;
     margin-bottom: 21px;
     font-size: clamp(2.25rem, 4vw, 3.8rem);
     font-weight: 900;
 }
 
 .contact-content > p {
-    max-width: 670px;
+    max-width: 680px;
+    margin-bottom: 0;
     font-size: 1.04rem;
 }
 
-.contact-coming-soon {
-    display: inline-block;
-    margin-top: 10px;
-    margin-bottom: 0;
-    padding: 13px 18px;
+.official-contacts {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+    max-width: 690px;
+    margin-top: 30px;
+}
+
+.official-contact-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 17px;
+    width: 100%;
+    min-width: 0;
+    padding: 18px 20px;
+    color: var(--text-dark);
+    background:
+        linear-gradient(
+            135deg,
+            #fbf7ff,
+            #f3edff
+        );
+    border: 3px solid rgba(143, 34, 212, 0.15);
+    border-radius: 22px;
+    box-shadow:
+        0 7px 0 rgba(143, 34, 212, 0.12),
+        0 15px 25px rgba(32, 58, 101, 0.08);
+    transition:
+        transform var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        background var(--transition);
+}
+
+.official-contact-card:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #f7efff,
+            #edf9ff
+        );
+    border-color: var(--purple);
+    box-shadow:
+        0 5px 0 rgba(143, 34, 212, 0.18),
+        0 16px 30px rgba(32, 58, 101, 0.13);
+    transform: translateY(-4px);
+}
+
+.official-contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    background: var(--white);
+    border: 2px solid rgba(143, 34, 212, 0.1);
+    border-radius: 18px;
+    box-shadow: var(--shadow-small);
+    font-size: 1.75rem;
+}
+
+.official-contact-content {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.35;
+}
+
+.official-contact-content strong {
+    margin-bottom: 5px;
     color: var(--purple-dark);
-    background: #f4e9ff;
-    border-radius: 15px;
-    font-weight: 900;
+    font-size: 1.02rem;
+    line-height: 1.25;
+}
+
+.official-contact-content > span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: var(--text-light);
+    font-size: 0.94rem;
+    line-height: 1.4;
 }
 
 .contact-characters {
     position: relative;
     align-self: stretch;
-    min-height: 440px;
+    min-width: 0;
+    min-height: 530px;
+    overflow: hidden;
     background:
         radial-gradient(
             circle at center,
-            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.84),
             transparent 43%
         ),
         linear-gradient(
@@ -2625,25 +2922,41 @@ input:focus-visible {
         );
 }
 
+.contact-characters::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 76%;
+    aspect-ratio: 1;
+    border: 14px dotted rgba(143, 34, 212, 0.12);
+    border-radius: 50%;
+    content: "";
+    transform: translate(-50%, -50%);
+}
+
 .contact-cloud,
 .contact-balloon {
     position: absolute;
     z-index: 2;
     object-fit: contain;
-    filter: drop-shadow(0 16px 13px rgba(37, 50, 74, 0.16));
+    filter: drop-shadow(
+        0 16px 13px rgba(37, 50, 74, 0.16)
+    );
 }
 
 .contact-cloud {
-    right: 3%;
+    right: 0;
     bottom: 2%;
-    width: 68%;
+    width: 72%;
+    max-height: 360px;
     animation: cloudFloat 5s ease-in-out infinite;
 }
 
 .contact-balloon {
-    bottom: 10%;
-    left: 5%;
-    width: 42%;
+    bottom: 9%;
+    left: 3%;
+    width: 43%;
+    max-height: 320px;
     animation: balloonFloat 4.5s ease-in-out infinite;
 }
 
@@ -3291,6 +3604,20 @@ input:focus-visible {
         max-height: 480px;
     }
 
+    .puzzle-character-selector {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .puzzle-game-layout,
+    .puzzle-game-layout.preview-visible {
+        grid-template-columns: 1fr;
+    }
+
+    .puzzle-preview-card {
+        width: min(100%, 520px);
+        margin-inline: auto;
+    }
+
     .coloring-area {
         grid-template-columns: 1fr;
     }
@@ -3503,23 +3830,43 @@ input:focus-visible {
         grid-template-columns: 1fr;
     }
 
-    .memory-game-header {
-        align-items: flex-start;
+    .puzzle-game-header {
         flex-direction: column;
     }
 
-    .memory-board {
-        grid-template-columns: repeat(3, minmax(80px, 1fr));
-        gap: 11px;
+    .puzzle-character-selector {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .memory-game-status {
+    .puzzle-game-status {
         align-items: stretch;
         flex-direction: column;
     }
 
-    .memory-game-status button {
+    .puzzle-game-status button,
+    #shufflePuzzleButton {
+        width: 100%;
         margin-left: 0;
+    }
+
+    .puzzle-game-layout,
+    .puzzle-game-layout.preview-visible {
+        grid-template-columns: 1fr;
+    }
+
+    .puzzle-preview-card {
+        width: min(100%, 520px);
+        margin-inline: auto;
+    }
+
+    .puzzle-board {
+        gap: 5px;
+        padding: 6px;
+        border-radius: 22px;
+    }
+
+    .puzzle-piece {
+        border-radius: 12px;
     }
 
     .coloring-character-list {
@@ -3689,8 +4036,38 @@ input:focus-visible {
         min-height: 390px;
     }
 
-    .memory-board {
-        grid-template-columns: repeat(2, minmax(90px, 1fr));
+    .puzzle-character-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .puzzle-character-option {
+        grid-template-columns: 54px minmax(0, 1fr);
+    }
+
+    .puzzle-character-option img {
+        width: 54px;
+        height: 54px;
+    }
+
+    .puzzle-board {
+        gap: 3px;
+        padding: 4px;
+        border-width: 4px;
+        border-radius: 18px;
+    }
+
+    .puzzle-piece {
+        border-width: 2px;
+        border-radius: 9px;
+    }
+
+    .puzzle-piece.is-correct::after {
+        top: 4px;
+        right: 4px;
+        width: 22px;
+        height: 22px;
+        border-width: 2px;
+        font-size: 0.72rem;
     }
 
     .coloring-character-list {
@@ -3722,6 +4099,94 @@ input:focus-visible {
     .modal-content {
         max-height: calc(100vh - 18px);
         border-radius: 24px;
+    }
+}
+
+
+/* =========================================================
+   AJUSTES RESPONSIVOS DOS CONTATOS
+========================================================= */
+
+@media (max-width: 980px) {
+    .contact-card {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-content {
+        padding: clamp(36px, 7vw, 64px);
+    }
+
+    .official-contacts {
+        max-width: none;
+    }
+
+    .contact-characters {
+        min-height: 440px;
+    }
+
+    .contact-cloud {
+        right: 6%;
+        width: 58%;
+    }
+
+    .contact-balloon {
+        left: 8%;
+        width: 35%;
+    }
+}
+
+@media (max-width: 700px) {
+    .contact-card {
+        min-height: 0;
+        border-radius: 30px;
+    }
+
+    .contact-content {
+        padding: 36px 23px;
+    }
+
+    .contact-content h2 {
+        font-size: 2.35rem;
+    }
+
+    .official-contact-card {
+        padding: 17px;
+    }
+
+    .contact-characters {
+        min-height: 390px;
+    }
+
+    .contact-cloud {
+        right: 1%;
+        width: 65%;
+    }
+
+    .contact-balloon {
+        left: 3%;
+        width: 40%;
+    }
+}
+
+@media (max-width: 430px) {
+    .official-contact-card {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        padding: 19px 14px;
+        text-align: center;
+    }
+
+    .official-contact-content {
+        align-items: center;
+        text-align: center;
+    }
+
+    .official-contact-content > span {
+        font-size: 0.86rem;
+    }
+
+    .contact-characters {
+        min-height: 330px;
     }
 }
 
@@ -3773,77 +4238,5 @@ input:focus-visible {
         width: 100%;
         max-width: none;
         border: 0;
-    }
-/* =========================================================
-   CONTATOS OFICIAIS
-========================================================= */
-
-.official-contacts {
-    display: grid;
-    gap: 15px;
-    margin-top: 28px;
-}
-
-.official-contact-card {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    gap: 16px;
-    padding: 18px 20px;
-    color: var(--text-dark);
-    background: #f8f2ff;
-    border: 3px solid rgba(143, 34, 212, 0.14);
-    border-radius: 21px;
-    box-shadow: 0 7px 0 rgba(143, 34, 212, 0.12);
-    transition:
-        transform var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition);
-}
-
-.official-contact-card:hover {
-    border-color: var(--purple);
-    box-shadow:
-        0 5px 0 rgba(143, 34, 212, 0.18),
-        var(--shadow-small);
-    transform: translateY(-4px);
-}
-
-.official-contact-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 55px;
-    height: 55px;
-    background: var(--white);
-    border-radius: 17px;
-    box-shadow: var(--shadow-small);
-    font-size: 1.7rem;
-}
-
-.official-contact-content {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-}
-
-.official-contact-content strong {
-    margin-bottom: 3px;
-    color: var(--purple-dark);
-    font-size: 1rem;
-}
-
-.official-contact-content > span {
-    overflow-wrap: anywhere;
-    color: var(--text-light);
-    font-size: 0.93rem;
-}
-
-@media (max-width: 430px) {
-    .official-contact-card {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        padding: 18px 14px;
-        text-align: center;
     }
 }

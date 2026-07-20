@@ -3,10 +3,10 @@
 /* =========================================================
    CAPITÃO POP IT
    ARQUIVO: script.js
-   VERSÃO CORRIGIDA
+   VERSÃO COM QUEBRA-CABEÇA
 ========================================================= */
 
-document.addEventListener('DOMContentLoaded', () => {
+function initializeSite() {
     const initializers = [
         initializeCurrentYear,
         initializeMobileMenu,
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeStoryModal,
         initializeInteractiveStory,
         initializeGameNavigation,
-        initializeMemoryGame,
+        initializePuzzleGame,
         initializeColoringGame
     ];
 
@@ -29,7 +29,17 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
     });
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener(
+        'DOMContentLoaded',
+        initializeSite,
+        { once: true }
+    );
+} else {
+    initializeSite();
+}
 
 /* =========================================================
    FUNÇÕES AUXILIARES
@@ -768,96 +778,148 @@ function initializeGameNavigation() {
 }
 
 /* =========================================================
-   JOGO DA MEMÓRIA
+   QUEBRA-CABEÇA POP IT
 ========================================================= */
 
-function initializeMemoryGame() {
+function initializePuzzleGame() {
     const section = document.getElementById(
-        'memoryGameSection'
+        'puzzleGameSection'
     );
-    const board = document.getElementById('memoryBoard');
+    const board = document.getElementById('puzzleBoard');
     const movesElement = document.getElementById(
-        'memoryMoves'
+        'puzzleMoves'
     );
-    const pairsElement = document.getElementById(
-        'memoryPairs'
+    const characterNameElement = document.getElementById(
+        'puzzleCharacterName'
     );
     const messageElement = document.getElementById(
-        'memoryMessage'
+        'puzzleMessage'
     );
     const closeButton = document.getElementById(
-        'closeMemoryGameButton'
+        'closePuzzleGameButton'
     );
-    const restartButton = document.getElementById(
-        'restartMemoryGameButton'
+    const shuffleButton = document.getElementById(
+        'shufflePuzzleButton'
     );
-    const openButton = document.querySelector(
-        '[data-game="memory"]'
+    const previewButton = document.getElementById(
+        'previewPuzzleButton'
+    );
+    const previewCard = document.getElementById(
+        'puzzlePreviewCard'
+    );
+    const previewImage = document.getElementById(
+        'puzzlePreviewImage'
+    );
+    const openButton = document.getElementById(
+        'openPuzzleGameButton'
+    );
+    const layout = section?.querySelector(
+        '.puzzle-game-layout'
+    );
+    const characterButtons = document.querySelectorAll(
+        '.puzzle-character-option'
     );
 
+    const requiredElements = {
+        section,
+        board,
+        movesElement,
+        characterNameElement,
+        messageElement,
+        closeButton,
+        shuffleButton,
+        previewButton,
+        previewCard,
+        previewImage,
+        openButton,
+        layout
+    };
+
+    const missingElements = Object.entries(requiredElements)
+        .filter(([, element]) => !element)
+        .map(([name]) => name);
+
     if (
-        !section ||
-        !board ||
-        !movesElement ||
-        !pairsElement ||
-        !messageElement ||
-        !closeButton ||
-        !restartButton ||
-        !openButton
+        missingElements.length > 0 ||
+        characterButtons.length === 0
     ) {
+        console.error(
+            'Não foi possível iniciar o quebra-cabeça.',
+            {
+                elementosAusentes: missingElements,
+                botoesDePersonagem:
+                    characterButtons.length
+            }
+        );
+
         return;
     }
 
-    const characters = [
-        {
-            key: 'popit',
-            name: 'Capitão Pop It',
-            image: 'img/personagens/popit.png'
-        },
-        {
-            key: 'miss-pop',
-            name: 'Miss Pop',
-            image: 'img/personagens/miss-pop.png'
-        },
-        {
-            key: 'lia',
-            name: 'Lia',
-            image: 'img/personagens/lia.png'
-        },
-        {
-            key: 'max',
-            name: 'Max',
-            image: 'img/personagens/max.png'
-        },
-        {
-            key: 'gelecao',
-            name: 'Gelecão',
-            image: 'img/personagens/gelecao.png'
-        },
-        {
-            key: 'cloud',
-            name: 'Cloud',
-            image: 'img/personagens/cloud.png'
-        },
-        {
-            key: 'helio',
-            name: 'Balão Hélio',
-            image: 'img/personagens/helio-balao.png'
-        },
-        {
-            key: 'dog-doug',
-            name: 'Dog Doug',
-            image: 'img/personagens/dog-doug.png'
-        }
-    ];
+    if (section.dataset.puzzleInitialized === 'true') {
+        return;
+    }
 
-    let firstCard = null;
-    let secondCard = null;
-    let locked = false;
+    section.dataset.puzzleInitialized = 'true';
+
+    const characters = {
+        popit: {
+            name: 'Capitão Pop It',
+            image: 'img/personagens/popit.png',
+            colors: ['#b9f2ff', '#e9ddff', '#fff1a9']
+        },
+
+        'miss-pop': {
+            name: 'Miss Pop',
+            image: 'img/personagens/miss-pop.png',
+            colors: ['#ffd0ea', '#eee0ff', '#b9f2ff']
+        },
+
+        gelecao: {
+            name: 'Gelecão',
+            image: 'img/personagens/gelecao.png',
+            colors: ['#dfffa8', '#b9f2ff', '#fff1a9']
+        },
+
+        cloud: {
+            name: 'Cloud',
+            image: 'img/personagens/cloud.png',
+            colors: ['#d9f8ff', '#eee4ff', '#ffd9ef']
+        },
+
+        'dog-doug': {
+            name: 'Dog Doug',
+            image: 'img/personagens/dog-doug.png',
+            colors: ['#fff2d6', '#ffd9ef', '#d9f8ff']
+        }
+    };
+
+    const solvedOrder = Array.from(
+        { length: 9 },
+        (_, index) => index
+    );
+
+    let selectedCharacter = 'popit';
+    let currentOrder = [...solvedOrder];
+    let selectedPosition = null;
     let moves = 0;
-    let matchedPairs = 0;
-    let totalPairs = 0;
     let gameBuilt = false;
+    let artworkToken = 0;
+    let puzzleImageSource =
+        characters[selectedCharacter].image;
+
+    const isSolved = () =>
+        currentOrder.every(
+            (tileIndex, position) =>
+                tileIndex === position
+        );
+
+    const countWrongPieces = (order) =>
+        order.reduce(
+            (total, tileIndex, position) =>
+                total +
+                Number(tileIndex !== position),
+            0
+        );
 
     const shuffle = (items) => {
         const result = [...items];
@@ -885,165 +947,727 @@ function initializeMemoryGame() {
 
     const updateStatus = () => {
         movesElement.textContent = String(moves);
-        pairsElement.textContent = String(matchedPairs);
+
+        characterNameElement.textContent =
+            characters[selectedCharacter].name;
     };
 
-    const resetSelection = () => {
-        firstCard = null;
-        secondCard = null;
-        locked = false;
+    const updatePreviewState = (isVisible) => {
+        previewCard.classList.toggle(
+            'is-visible',
+            isVisible
+        );
+
+        layout.classList.toggle(
+            'preview-visible',
+            isVisible
+        );
+
+        previewButton.setAttribute(
+            'aria-pressed',
+            String(isVisible)
+        );
+
+        previewButton.textContent = isVisible
+            ? 'Ocultar imagem'
+            : 'Ver imagem';
     };
 
-    const finishGame = () => {
+    const updateCharacterButtons = () => {
+        characterButtons.forEach((button) => {
+            const isActive =
+                button.dataset.puzzleCharacter ===
+                selectedCharacter;
+
+            button.classList.toggle(
+                'active',
+                isActive
+            );
+
+            button.setAttribute(
+                'aria-pressed',
+                String(isActive)
+            );
+        });
+    };
+
+    const finishPuzzle = () => {
+        board.classList.add('is-complete');
+        messageElement.classList.add('success');
+
         messageElement.textContent =
-            `Parabéns! Você encontrou os ${totalPairs} pares ` +
-            `em ${moves} jogadas!`;
+            `Parabéns! Você completou o quebra-cabeça ` +
+            `de ${characters[selectedCharacter].name} ` +
+            `em ${moves} movimentos!`;
     };
 
-    const compareCards = () => {
-        if (!firstCard || !secondCard) {
-            return;
-        }
+    const renderBoard = () => {
+        board.innerHTML = '';
+        board.classList.toggle(
+            'is-complete',
+            isSolved() && moves > 0
+        );
 
-        const isMatch =
-            firstCard.dataset.character ===
-            secondCard.dataset.character;
+        currentOrder.forEach(
+            (tileIndex, position) => {
+                const piece =
+                    document.createElement('button');
 
-        if (isMatch) {
-            firstCard.classList.add('is-matched');
-            secondCard.classList.add('is-matched');
+                const column = tileIndex % 3;
+                const row = Math.floor(tileIndex / 3);
 
-            matchedPairs += 1;
-            updateStatus();
-            resetSelection();
+                piece.type = 'button';
+                piece.className = 'puzzle-piece';
+                piece.dataset.position =
+                    String(position);
+                piece.dataset.tile =
+                    String(tileIndex);
 
-            if (matchedPairs === totalPairs) {
-                finishGame();
+                piece.style.backgroundImage =
+                    `url("${puzzleImageSource}")`;
+
+                piece.style.backgroundPosition =
+                    `${column * 50}% ${row * 50}%`;
+
+                piece.setAttribute(
+                    'aria-label',
+                    `Peça ${position + 1} do ` +
+                    `quebra-cabeça.`
+                );
+
+                if (position === selectedPosition) {
+                    piece.classList.add(
+                        'is-selected'
+                    );
+                }
+
+                if (position === tileIndex) {
+                    piece.classList.add(
+                        'is-correct'
+                    );
+                }
+
+                piece.addEventListener(
+                    'click',
+                    () => {
+                        handlePieceClick(position);
+                    }
+                );
+
+                board.appendChild(piece);
             }
-
-            return;
-        }
-
-        window.setTimeout(() => {
-            firstCard.classList.remove('is-flipped');
-            secondCard.classList.remove('is-flipped');
-            resetSelection();
-        }, 850);
+        );
     };
 
-    const handleCardClick = (card) => {
-        if (
-            locked ||
-            card === firstCard ||
-            card.classList.contains('is-matched')
-        ) {
+    const resetMessage = () => {
+        messageElement.textContent = '';
+        messageElement.classList.remove('success');
+        board.classList.remove('is-complete');
+    };
+
+    const shufflePuzzle = () => {
+        selectedPosition = null;
+        moves = 0;
+        resetMessage();
+
+        let newOrder = [...solvedOrder];
+        let attempts = 0;
+
+        do {
+            newOrder = shuffle(solvedOrder);
+            attempts += 1;
+        } while (
+            (
+                newOrder.every(
+                    (tileIndex, position) =>
+                        tileIndex === position
+                ) ||
+                countWrongPieces(newOrder) < 6
+            ) &&
+            attempts < 80
+        );
+
+        currentOrder = newOrder;
+
+        updateStatus();
+        renderBoard();
+    };
+
+    function handlePieceClick(position) {
+        if (isSolved() && moves > 0) {
             return;
         }
 
-        card.classList.add('is-flipped');
-
-        if (!firstCard) {
-            firstCard = card;
+        if (selectedPosition === null) {
+            selectedPosition = position;
+            renderBoard();
             return;
         }
 
-        secondCard = card;
-        locked = true;
+        if (selectedPosition === position) {
+            selectedPosition = null;
+            renderBoard();
+            return;
+        }
+
+        [
+            currentOrder[selectedPosition],
+            currentOrder[position]
+        ] = [
+            currentOrder[position],
+            currentOrder[selectedPosition]
+        ];
+
+        selectedPosition = null;
         moves += 1;
 
         updateStatus();
-        compareCards();
-    };
+        renderBoard();
 
-    const buildGame = () => {
-        firstCard = null;
-        secondCard = null;
-        locked = false;
-        moves = 0;
-        matchedPairs = 0;
-        messageElement.textContent = '';
+        if (isSolved()) {
+            finishPuzzle();
+        }
+    }
 
-        const selectedCharacters = shuffle(characters).slice(
-            0,
-            6
-        );
+    const loadImage = (source) =>
+        new Promise((resolve, reject) => {
+            const image = new Image();
 
-        totalPairs = selectedCharacters.length;
-
-        const cards = shuffle(
-            selectedCharacters.flatMap((character) => [
-                {
-                    ...character,
-                    copy: 1
-                },
-                {
-                    ...character,
-                    copy: 2
-                }
-            ])
-        );
-
-        board.innerHTML = '';
-
-        cards.forEach((character, index) => {
-            const card = document.createElement('button');
-
-            card.type = 'button';
-            card.className = 'memory-card';
-            card.dataset.character = character.key;
-            card.setAttribute(
-                'aria-label',
-                `Carta ${index + 1}. Clique para virar.`
+            image.addEventListener(
+                'load',
+                () => resolve(image),
+                { once: true }
             );
 
-            card.innerHTML = `
-                <span class="memory-card-inner">
-                    <span
-                        class="memory-card-front"
-                        aria-hidden="true"
-                    ></span>
+            image.addEventListener(
+                'error',
+                () => reject(
+                    new Error(
+                        `Não foi possível carregar ${source}`
+                    )
+                ),
+                { once: true }
+            );
 
-                    <span class="memory-card-back">
-                        <img
-                            src="${character.image}"
-                            alt="${escapeHtml(character.name)}"
-                            draggable="false"
-                        >
-                    </span>
-                </span>
-            `;
-
-            card.addEventListener('click', () => {
-                handleCardClick(card);
-            });
-
-            board.appendChild(card);
+            image.src = source;
         });
 
-        updateStatus();
-        gameBuilt = true;
-    };
+    const removeConnectedLightBackground = (
+        canvas,
+        context
+    ) => {
+        const width = canvas.width;
+        const height = canvas.height;
 
-    openButton.addEventListener('click', () => {
-        section.classList.remove('game-hidden');
-        section.classList.add('is-visible');
+        let imageData;
 
-        if (!gameBuilt) {
-            buildGame();
+        try {
+            imageData = context.getImageData(
+                0,
+                0,
+                width,
+                height
+            );
+        } catch {
+            return;
         }
 
-        window.setTimeout(() => {
-            scrollToElement(section);
-        }, 50);
+        const data = imageData.data;
+        const visited = new Uint8Array(
+            width * height
+        );
+        const queue = new Int32Array(
+            width * height
+        );
+
+        let head = 0;
+        let tail = 0;
+
+        const isRemovable = (index) => {
+            const offset = index * 4;
+            const alpha = data[offset + 3];
+
+            if (alpha < 15) {
+                return true;
+            }
+
+            const red = data[offset];
+            const green = data[offset + 1];
+            const blue = data[offset + 2];
+            const highest = Math.max(
+                red,
+                green,
+                blue
+            );
+            const lowest = Math.min(
+                red,
+                green,
+                blue
+            );
+
+            return (
+                red >= 245 &&
+                green >= 245 &&
+                blue >= 245 &&
+                highest - lowest <= 12
+            );
+        };
+
+        const add = (index) => {
+            if (
+                index < 0 ||
+                index >= visited.length ||
+                visited[index] ||
+                !isRemovable(index)
+            ) {
+                return;
+            }
+
+            visited[index] = 1;
+            queue[tail] = index;
+            tail += 1;
+        };
+
+        for (let x = 0; x < width; x += 1) {
+            add(x);
+            add((height - 1) * width + x);
+        }
+
+        for (let y = 0; y < height; y += 1) {
+            add(y * width);
+            add(y * width + width - 1);
+        }
+
+        while (head < tail) {
+            const index = queue[head];
+
+            head += 1;
+
+            const x = index % width;
+            const y = Math.floor(index / width);
+            const offset = index * 4;
+
+            data[offset + 3] = 0;
+
+            if (x > 0) {
+                add(index - 1);
+            }
+
+            if (x < width - 1) {
+                add(index + 1);
+            }
+
+            if (y > 0) {
+                add(index - width);
+            }
+
+            if (y < height - 1) {
+                add(index + width);
+            }
+        }
+
+        context.putImageData(imageData, 0, 0);
+    };
+
+    const findVisibleBounds = (
+        canvas,
+        context
+    ) => {
+        let imageData;
+
+        try {
+            imageData = context.getImageData(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+        } catch {
+            return {
+                x: 0,
+                y: 0,
+                width: canvas.width,
+                height: canvas.height
+            };
+        }
+
+        const data = imageData.data;
+
+        let minX = canvas.width;
+        let minY = canvas.height;
+        let maxX = -1;
+        let maxY = -1;
+
+        for (
+            let y = 0;
+            y < canvas.height;
+            y += 1
+        ) {
+            for (
+                let x = 0;
+                x < canvas.width;
+                x += 1
+            ) {
+                const alpha =
+                    data[
+                        (y * canvas.width + x) *
+                            4 +
+                            3
+                    ];
+
+                if (alpha > 20) {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        }
+
+        if (maxX < minX || maxY < minY) {
+            return {
+                x: 0,
+                y: 0,
+                width: canvas.width,
+                height: canvas.height
+            };
+        }
+
+        return {
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1
+        };
+    };
+
+    const createPuzzleArtwork = async (
+        character
+    ) => {
+        const image = await loadImage(
+            character.image
+        );
+
+        const maximumSourceSize = 1100;
+        const naturalWidth =
+            image.naturalWidth || image.width;
+        const naturalHeight =
+            image.naturalHeight || image.height;
+        const sourceScale = Math.min(
+            1,
+            maximumSourceSize /
+                Math.max(
+                    naturalWidth,
+                    naturalHeight
+                )
+        );
+
+        const sourceCanvas =
+            document.createElement('canvas');
+
+        sourceCanvas.width = Math.max(
+            1,
+            Math.round(
+                naturalWidth * sourceScale
+            )
+        );
+
+        sourceCanvas.height = Math.max(
+            1,
+            Math.round(
+                naturalHeight * sourceScale
+            )
+        );
+
+        const sourceContext =
+            sourceCanvas.getContext('2d', {
+                willReadFrequently: true
+            });
+
+        if (!sourceContext) {
+            return character.image;
+        }
+
+        sourceContext.drawImage(
+            image,
+            0,
+            0,
+            sourceCanvas.width,
+            sourceCanvas.height
+        );
+
+        removeConnectedLightBackground(
+            sourceCanvas,
+            sourceContext
+        );
+
+        const bounds = findVisibleBounds(
+            sourceCanvas,
+            sourceContext
+        );
+
+        const artworkCanvas =
+            document.createElement('canvas');
+
+        artworkCanvas.width = 900;
+        artworkCanvas.height = 900;
+
+        const artworkContext =
+            artworkCanvas.getContext('2d');
+
+        if (!artworkContext) {
+            return character.image;
+        }
+
+        const gradient =
+            artworkContext.createLinearGradient(
+                0,
+                0,
+                900,
+                900
+            );
+
+        gradient.addColorStop(
+            0,
+            character.colors[0]
+        );
+
+        gradient.addColorStop(
+            0.52,
+            character.colors[1]
+        );
+
+        gradient.addColorStop(
+            1,
+            character.colors[2]
+        );
+
+        artworkContext.fillStyle = gradient;
+        artworkContext.fillRect(0, 0, 900, 900);
+
+        const circles = [
+            [105, 120, 74, '#ffffff66'],
+            [785, 115, 105, '#ffffff55'],
+            [780, 760, 125, '#8f22d426'],
+            [120, 765, 95, '#20bfe32b'],
+            [455, 90, 38, '#ffe11599'],
+            [465, 810, 45, '#ff82c67a']
+        ];
+
+        circles.forEach(
+            ([x, y, radius, color]) => {
+                artworkContext.beginPath();
+                artworkContext.arc(
+                    x,
+                    y,
+                    radius,
+                    0,
+                    Math.PI * 2
+                );
+                artworkContext.fillStyle = color;
+                artworkContext.fill();
+            }
+        );
+
+        artworkContext.save();
+        artworkContext.translate(450, 450);
+        artworkContext.rotate(-0.09);
+        artworkContext.strokeStyle =
+            '#ffffff70';
+        artworkContext.lineWidth = 28;
+        artworkContext.strokeRect(
+            -310,
+            -310,
+            620,
+            620
+        );
+        artworkContext.restore();
+
+        const availableWidth = 690;
+        const availableHeight = 690;
+        const scale = Math.min(
+            availableWidth / bounds.width,
+            availableHeight / bounds.height
+        );
+
+        const drawWidth =
+            bounds.width * scale;
+        const drawHeight =
+            bounds.height * scale;
+        const drawX =
+            (900 - drawWidth) / 2;
+        const drawY =
+            (900 - drawHeight) / 2 + 25;
+
+        artworkContext.save();
+        artworkContext.shadowColor =
+            'rgba(32, 58, 101, 0.28)';
+        artworkContext.shadowBlur = 24;
+        artworkContext.shadowOffsetY = 18;
+
+        artworkContext.drawImage(
+            sourceCanvas,
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height,
+            drawX,
+            drawY,
+            drawWidth,
+            drawHeight
+        );
+
+        artworkContext.restore();
+
+        return artworkCanvas.toDataURL(
+            'image/png'
+        );
+    };
+
+    const setCharacter = async (
+        characterKey
+    ) => {
+        const character =
+            characters[characterKey];
+
+        if (!character) {
+            return;
+        }
+
+        selectedCharacter = characterKey;
+        puzzleImageSource = character.image;
+
+        updateCharacterButtons();
+        updateStatus();
+
+        previewImage.src = character.image;
+        previewImage.alt =
+            `Imagem completa de ${character.name}`;
+
+        shufflePuzzle();
+
+        const currentToken =
+            artworkToken + 1;
+
+        artworkToken = currentToken;
+        board.setAttribute(
+            'aria-busy',
+            'true'
+        );
+
+        try {
+            const artwork =
+                await createPuzzleArtwork(
+                    character
+                );
+
+            if (
+                currentToken !== artworkToken ||
+                selectedCharacter !==
+                    characterKey
+            ) {
+                return;
+            }
+
+            puzzleImageSource = artwork;
+            previewImage.src = artwork;
+            renderBoard();
+        } catch (error) {
+            console.warn(
+                'O quebra-cabeça usará a imagem original.',
+                error
+            );
+        } finally {
+            if (currentToken === artworkToken) {
+                board.setAttribute(
+                    'aria-busy',
+                    'false'
+                );
+            }
+        }
+    };
+
+    openButton.addEventListener(
+        'click',
+        () => {
+            section.classList.remove(
+                'game-hidden'
+            );
+
+            section.classList.add(
+                'is-visible'
+            );
+
+            if (!gameBuilt) {
+                gameBuilt = true;
+                setCharacter(selectedCharacter);
+            }
+
+            window.setTimeout(() => {
+                scrollToElement(section);
+            }, 50);
+        }
+    );
+
+    closeButton.addEventListener(
+        'click',
+        () => {
+            section.classList.remove(
+                'is-visible'
+            );
+
+            section.classList.add(
+                'game-hidden'
+            );
+
+            updatePreviewState(false);
+
+            scrollToElement(
+                document.getElementById('jogos')
+            );
+        }
+    );
+
+    shuffleButton.addEventListener(
+        'click',
+        shufflePuzzle
+    );
+
+    previewButton.addEventListener(
+        'click',
+        () => {
+            updatePreviewState(
+                !previewCard.classList.contains(
+                    'is-visible'
+                )
+            );
+        }
+    );
+
+    characterButtons.forEach((button) => {
+        button.addEventListener(
+            'click',
+            () => {
+                const characterKey =
+                    button.dataset
+                        .puzzleCharacter;
+
+                if (
+                    !characterKey ||
+                    characterKey ===
+                        selectedCharacter
+                ) {
+                    return;
+                }
+
+                setCharacter(characterKey);
+            }
+        );
     });
 
-    closeButton.addEventListener('click', () => {
-        section.classList.remove('is-visible');
-        section.classList.add('game-hidden');
-        scrollToElement(document.getElementById('jogos'));
-    });
-
-    restartButton.addEventListener('click', buildGame);
+    updateCharacterButtons();
+    updateStatus();
+    updatePreviewState(false);
 }
 
 /* =========================================================

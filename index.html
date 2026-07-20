@@ -52,9 +52,9 @@
         href="img/logos/logo-capitao-popit.png"
     >
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=50">
 
-    <script src="script.js" defer></script>
+    <script src="script.js?v=50" defer></script>
 </head>
 
 <body>
@@ -110,6 +110,7 @@
                 <a href="#jogos">Jogos</a>
                 <a href="#colorir">Colorir</a>
                 <a href="#fabrincar">Fabrincar</a>
+                <a href="#contato">Contato</a>
             </nav>
 
             <a href="#jogos" class="header-play-button">
@@ -1148,29 +1149,30 @@
 
                 <div class="games-grid">
 
-                    <!-- JOGO DA MEMÓRIA -->
+                    <!-- QUEBRA-CABEÇA -->
 
-                    <article class="game-card game-card-memory">
+                    <article class="game-card game-card-puzzle">
 
-                        <div class="game-card-icon">🧠</div>
+                        <div class="game-card-icon">🧩</div>
 
                         <div class="game-card-content">
 
                             <span class="game-label">
-                                Memória e atenção
+                                Raciocínio e coordenação
                             </span>
 
-                            <h3>Jogo da Memória</h3>
+                            <h3>Quebra-Cabeça Pop It</h3>
 
                             <p>
-                                Encontre os pares dos personagens da
-                                Turma Pop It.
+                                Organize as 9 peças e complete a imagem
+                                de um personagem da Turma Pop It.
                             </p>
 
                             <button
                                 type="button"
                                 class="game-button"
-                                data-game="memory"
+                                id="openPuzzleGameButton"
+                                data-game="puzzle"
                             >
                                 Jogar
                             </button>
@@ -1246,72 +1248,202 @@
         </section>
 
         <!-- =================================================
-             ÁREA DO JOGO DA MEMÓRIA
+             ÁREA DO QUEBRA-CABEÇA
         ================================================== -->
 
         <section
-            class="memory-game-section section game-hidden"
-            id="memoryGameSection"
-            aria-labelledby="memoryGameTitle"
+            class="puzzle-game-section section game-hidden"
+            id="puzzleGameSection"
+            aria-labelledby="puzzleGameTitle"
         >
             <div class="section-container">
 
-                <div class="memory-game-header">
+                <div class="puzzle-game-header">
 
                     <div>
 
                         <span class="section-tag">
-                            Encontre os pares
+                            Monte a imagem
                         </span>
 
-                        <h2 id="memoryGameTitle">
-                            Jogo da Memória
+                        <h2 id="puzzleGameTitle">
+                            Quebra-Cabeça Pop It
                         </h2>
+
+                        <p>
+                            Clique em duas peças para trocar suas posições
+                            e completar o personagem.
+                        </p>
 
                     </div>
 
                     <button
                         type="button"
                         class="close-game-button"
-                        id="closeMemoryGameButton"
+                        id="closePuzzleGameButton"
                     >
                         Fechar jogo
                     </button>
 
                 </div>
 
-                <div class="memory-game-status">
-
-                    <span>
-                        Jogadas:
-                        <strong id="memoryMoves">0</strong>
-                    </span>
-
-                    <span>
-                        Pares encontrados:
-                        <strong id="memoryPairs">0</strong>
-                    </span>
+                <div
+                    class="puzzle-character-selector"
+                    aria-label="Escolha o personagem do quebra-cabeça"
+                >
 
                     <button
                         type="button"
-                        id="restartMemoryGameButton"
+                        class="puzzle-character-option active"
+                        data-puzzle-character="popit"
                     >
-                        Reiniciar
+                        <img
+                            src="img/personagens/popit.png"
+                            alt=""
+                            aria-hidden="true"
+                        >
+
+                        <span>Capitão Pop It</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="puzzle-character-option"
+                        data-puzzle-character="miss-pop"
+                    >
+                        <img
+                            src="img/personagens/miss-pop.png"
+                            alt=""
+                            aria-hidden="true"
+                        >
+
+                        <span>Miss Pop</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="puzzle-character-option"
+                        data-puzzle-character="gelecao"
+                    >
+                        <img
+                            src="img/personagens/gelecao.png"
+                            alt=""
+                            aria-hidden="true"
+                        >
+
+                        <span>Gelecão</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="puzzle-character-option"
+                        data-puzzle-character="cloud"
+                    >
+                        <img
+                            src="img/personagens/cloud.png"
+                            alt=""
+                            aria-hidden="true"
+                        >
+
+                        <span>Cloud</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="puzzle-character-option"
+                        data-puzzle-character="dog-doug"
+                    >
+                        <img
+                            src="img/personagens/dog-doug.png"
+                            alt=""
+                            aria-hidden="true"
+                        >
+
+                        <span>Dog Doug</span>
                     </button>
 
                 </div>
 
-                <div
-                    class="memory-board"
-                    id="memoryBoard"
-                    aria-label="Tabuleiro do jogo da memória"
-                ></div>
+                <div class="puzzle-game-status">
 
-                <div
-                    class="memory-message"
-                    id="memoryMessage"
-                    aria-live="polite"
-                ></div>
+                    <span>
+                        Movimentos:
+                        <strong id="puzzleMoves">0</strong>
+                    </span>
+
+                    <span>
+                        Personagem:
+                        <strong id="puzzleCharacterName">
+                            Capitão Pop It
+                        </strong>
+                    </span>
+
+                    <span>
+                        Peças:
+                        <strong>9</strong>
+                    </span>
+
+                    <button
+                        type="button"
+                        id="shufflePuzzleButton"
+                    >
+                        Misturar novamente
+                    </button>
+
+                    <button
+                        type="button"
+                        id="previewPuzzleButton"
+                        aria-pressed="false"
+                    >
+                        Ver imagem
+                    </button>
+
+                </div>
+
+                <div class="puzzle-game-layout">
+
+                    <div class="puzzle-board-area">
+
+                        <div
+                            class="puzzle-board"
+                            id="puzzleBoard"
+                            role="group"
+                            aria-label="Tabuleiro do quebra-cabeça com 9 peças"
+                        ></div>
+
+                        <div
+                            class="puzzle-message"
+                            id="puzzleMessage"
+                            aria-live="polite"
+                        ></div>
+
+                    </div>
+
+                    <aside
+                        class="puzzle-preview-card"
+                        id="puzzlePreviewCard"
+                    >
+
+                        <span>Imagem completa</span>
+
+                        <div class="puzzle-preview-image-area">
+
+                            <img
+                                id="puzzlePreviewImage"
+                                src="img/personagens/popit.png"
+                                alt="Imagem completa do Capitão Pop It"
+                            >
+
+                        </div>
+
+                        <p>
+                            Use esta imagem como ajuda para montar
+                            o quebra-cabeça.
+                        </p>
+
+                    </aside>
+
+                </div>
 
             </div>
         </section>
@@ -1730,37 +1862,61 @@
 
                         <p>
                             Entre em contato para saber mais sobre a marca,
-                            produção, projetos e oportunidades de
+                            produção, projetos, parcerias e oportunidades de
                             licenciamento.
                         </p>
 
-                       <div class="official-contacts">
+                        <div class="official-contacts">
 
-    <a
-        href="mailto:comercial@capitaopopit.com.br"
-        class="official-contact-card"
-    >
-        <span class="official-contact-icon">💼</span>
+                            <a
+                                href="mailto:comercial@capitaopopit.com.br"
+                                class="official-contact-card"
+                                aria-label="Enviar e-mail para Comercial e Licenciamento"
+                            >
+                                <span
+                                    class="official-contact-icon"
+                                    aria-hidden="true"
+                                >
+                                    💼
+                                </span>
 
-        <span class="official-contact-content">
-            <strong>Comercial/Licenciamento</strong>
-            <span>comercial@capitaopopit.com.br</span>
-        </span>
-    </a>
+                                <span class="official-contact-content">
+                                    <strong>
+                                        Comercial/Licenciamento
+                                    </strong>
 
-    <a
-        href="mailto:marketing@capitaopopit.com.br"
-        class="official-contact-card"
-    >
-        <span class="official-contact-icon">🤝</span>
+                                    <span>
+                                        comercial@capitaopopit.com.br
+                                    </span>
+                                </span>
+                            </a>
 
-        <span class="official-contact-content">
-            <strong>Marketing/Parcerias</strong>
-            <span>marketing@capitaopopit.com.br</span>
-        </span>
-    </a>
+                            <a
+                                href="mailto:marketing@capitaopopit.com.br"
+                                class="official-contact-card"
+                                aria-label="Enviar e-mail para Marketing e Parcerias"
+                            >
+                                <span
+                                    class="official-contact-icon"
+                                    aria-hidden="true"
+                                >
+                                    🤝
+                                </span>
 
-</div>
+                                <span class="official-contact-content">
+                                    <strong>
+                                        Marketing/Parcerias
+                                    </strong>
+
+                                    <span>
+                                        marketing@capitaopopit.com.br
+                                    </span>
+                                </span>
+                            </a>
+
+                        </div>
+
+                    </div>
 
                     <div class="contact-characters">
 
